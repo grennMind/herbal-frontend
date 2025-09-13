@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  Leaf, 
-  Package, 
-  Brain, 
-  Search, 
-  Shield, 
-  Users, 
-  Star, 
+import {
+  Leaf,
+  Package,
+  Brain,
+  Search,
+  Shield,
+  Users,
+  Star,
   ArrowRight,
   CheckCircle,
   TrendingUp,
@@ -88,9 +88,16 @@ const Home = () => {
   ];
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800"
-      style={{ paddingTop: '100px' }}
+    <div
+      className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800 home-wheat"
+      style={{
+        paddingTop: '100px',
+        backgroundImage: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://i.pinimg.com/1200x/07/93/2a/07932ab86b0b6c0f7197db770c74f139.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
     >
       {/* Hero Section */}
       <section className="relative pb-20 overflow-hidden">
@@ -101,17 +108,17 @@ const Home = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center lg:text-left"
+              className="text-center lg:text-left text-white"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: '#F5DEB3' }}>
+                <span style={{ color: '#F5DEB3' }}>
                   Natural Wellness
                 </span>
                 <br />
-                <span className="text-neutral-900 dark:text-white">Meets Modern AI</span>
+                <span style={{ color: '#F5DEB3' }}>Meets Modern AI</span>
               </h1>
-              <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8 leading-relaxed">
-                Discover the power of herbal medicine enhanced by artificial intelligence. 
+              <p className="text-xl mb-8 leading-relaxed" style={{ color: '#F5DEB3' }}>
+                Discover the power of herbal medicine enhanced by artificial intelligence.
                 Identify plants, check symptoms, and get personalized recommendations for your wellness journey.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -143,12 +150,12 @@ const Home = () => {
                 <div className="w-full h-96 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/20 dark:to-primary-800/20 rounded-3xl flex items-center justify-center">
                   <div className="text-center">
                     <Leaf className="h-24 w-24 text-primary-600 dark:text-primary-400 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-primary-700 dark:text-primary-300 mb-2">AI Plant Scanner</h3>
-                    <p className="text-primary-600 dark:text-primary-400">Upload a photo to identify plants</p>
+                    <h3 className="text-2xl font-bold mb-2" style={{ color: '#F5DEB3' }}>AI Plant Scanner</h3>
+                    <p style={{ color: '#F5DEB3' }}>Upload a photo to identify plants</p>
                   </div>
                 </div>
               </div>
-              
+
               {/* Floating Elements */}
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl">
                 <Brain className="h-10 w-10 text-white" />
@@ -201,7 +208,7 @@ const Home = () => {
               Everything You Need for Natural Wellness
             </h2>
             <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
-              Our platform combines traditional herbal wisdom with cutting-edge AI technology 
+              Our platform combines traditional herbal wisdom with cutting-edge AI technology
               to provide you with the most comprehensive natural health solution.
             </p>
           </motion.div>
@@ -223,10 +230,10 @@ const Home = () => {
                       <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="h-8 w-8 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                      <h3 className="text-xl font-bold text-primary-600 dark:text-primary-400 mb-3 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-300">
                         {feature.title}
                       </h3>
-                      <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                      <p className="text-primary-600 dark:text-primary-400 leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -253,7 +260,7 @@ const Home = () => {
                 Why Choose HerbalMarket?
               </h2>
               <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-8 leading-relaxed">
-                We're committed to providing you with the highest quality herbal products 
+                We're committed to providing you with the highest quality herbal products
                 and AI-powered tools to support your natural wellness journey.
               </p>
               <div className="grid grid-cols-1 gap-4">
@@ -368,11 +375,11 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center text-white"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-wheat">
               Ready to Start Your Wellness Journey?
             </h2>
-            <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of people who are already experiencing the benefits of 
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-wheat">
+              Join thousands of people who are already experiencing the benefits of
               AI-powered herbal medicine and natural wellness solutions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

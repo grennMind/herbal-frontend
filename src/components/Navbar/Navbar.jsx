@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, 
-  X, 
-  ShoppingCart, 
-  User, 
-  LogOut, 
-  Settings, 
+import {
+  Menu,
+  X,
+  ShoppingCart,
+  User,
+  LogOut,
+  Settings,
   Package,
   Leaf,
   BookOpen,
@@ -94,11 +94,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md shadow-lg border-b border-neutral-200 dark:border-neutral-700' 
-        : 'bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm'
-    }`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+      ? 'bg-wheat shadow-lg border-b border-neutral-200'
+      : 'bg-wheat'
+      }`}>
       <div className="container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -122,11 +121,10 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    isActiveRoute(item.href)
-                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700'
-                      : 'text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
-                  }`}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${isActiveRoute(item.href)
+                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700'
+                    : 'text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{item.name}</span>
@@ -204,11 +202,10 @@ const Navbar = () => {
                       <p className="text-sm font-medium text-neutral-900 dark:text-white">{user.name}</p>
                       <p className="text-sm text-neutral-500 dark:text-neutral-400">{user.email}</p>
                       <div className="mt-2">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          user.userType === 'buyer' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300' :
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.userType === 'buyer' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300' :
                           user.userType === 'seller' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                          'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300'
-                        }`}>
+                            'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300'
+                          }`}>
                           {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}
                         </span>
                       </div>
@@ -276,18 +273,17 @@ const Navbar = () => {
                       key={item.name}
                       to={item.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                        isActiveRoute(item.href)
-                          ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700'
-                          : 'text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
-                      }`}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${isActiveRoute(item.href)
+                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700'
+                        : 'text-neutral-600 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                        }`}
                     >
                       <Icon className="h-5 w-5" />
                       <span>{item.name}</span>
                     </Link>
                   );
                 })}
-                
+
                 {/* Mobile User Actions */}
                 <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700">
                   <div className="px-4 py-3">

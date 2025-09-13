@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  Filter, 
-  Search, 
-  Grid, 
-  List, 
+import {
+  Filter,
+  Search,
+  Grid,
+  List,
   SlidersHorizontal,
   Star,
   Heart,
@@ -168,8 +168,8 @@ const Products = () => {
   const filteredProducts = products.filter(product => {
     if (filters.organicOnly && !product.isOrganic) return false;
     if (filters.category && product.category.toLowerCase() !== filters.category.toLowerCase()) return false;
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        !product.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !product.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
@@ -193,13 +193,13 @@ const Products = () => {
   const handleAddToCart = (product) => {
     const existingCart = JSON.parse(localStorage.getItem('herbalCart') || '[]');
     const existingItem = existingCart.find(item => item.id === product.id);
-    
+
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       existingCart.push({ ...product, quantity: 1 });
     }
-    
+
     localStorage.setItem('herbalCart', JSON.stringify(existingCart));
     // You could add a toast notification here
   };
@@ -250,7 +250,7 @@ const Products = () => {
                     <Link to={`/products/${product.id}`}>{product.name}</Link>
                   </h3>
                   <p className="text-neutral-600 dark:text-neutral-300 text-sm mb-3 line-clamp-2">{product.description}</p>
-                  
+
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-3">
                     {product.tags.slice(0, 3).map((tag, index) => (
@@ -275,7 +275,7 @@ const Products = () => {
                       <span className="text-lg text-neutral-400 dark:text-neutral-500 line-through">${product.compareAtPrice}</span>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center gap-1 mb-2">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
                     <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{product.rating}</span>
@@ -333,7 +333,7 @@ const Products = () => {
               <Package className="h-16 w-16 text-neutral-400 dark:text-neutral-500" />
             </div>
           )}
-          
+
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {product.isOrganic && (
@@ -407,9 +407,15 @@ const Products = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950"
-      style={{ paddingTop: '100px' }}
+    <div
+      className="min-h-screen"
+      style={{
+        paddingTop: '100px',
+        backgroundImage: "url('https://i.pinimg.com/736x/a7/43/46/a743467110479b7b01728be06451be68.jpg')",
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center'
+      }}
     >
       <div className="container">
         {/* Header Section */}
@@ -423,7 +429,7 @@ const Products = () => {
               Herbal Products
             </h1>
             <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
-              Discover our curated collection of premium herbal remedies and natural wellness products. 
+              Discover our curated collection of premium herbal remedies and natural wellness products.
               Each item is carefully selected and verified for quality and authenticity.
             </p>
           </div>
@@ -468,10 +474,10 @@ const Products = () => {
                 {/* Category Filter */}
                 <div>
                   <label className="form-label">Categories</label>
-                  <select 
+                  <select
                     className="form-input"
                     value={filters.category}
-                    onChange={(e) => setFilters({...filters, category: e.target.value})}
+                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
                   >
                     <option value="">All Categories</option>
                     {categories.map((category) => (
@@ -485,10 +491,10 @@ const Products = () => {
                 {/* Price Range Filter */}
                 <div>
                   <label className="form-label">Price Range</label>
-                  <select 
+                  <select
                     className="form-input"
                     value={filters.priceRange}
-                    onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
+                    onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
                   >
                     <option value="">Any Price</option>
                     {priceRanges.map((range) => (
@@ -505,7 +511,7 @@ const Products = () => {
                     type="checkbox"
                     id="organicOnly"
                     checked={filters.organicOnly}
-                    onChange={(e) => setFilters({...filters, organicOnly: e.target.checked})}
+                    onChange={(e) => setFilters({ ...filters, organicOnly: e.target.checked })}
                     className="form-checkbox"
                   />
                   <label htmlFor="organicOnly" className="text-sm font-medium flex items-center gap-2 text-neutral-700 dark:text-neutral-300">
@@ -517,10 +523,10 @@ const Products = () => {
                 {/* Sort Filter */}
                 <div>
                   <label className="form-label">Sort By</label>
-                  <select 
+                  <select
                     className="form-input"
                     value={filters.sortBy}
-                    onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
+                    onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
                   >
                     {sortOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -550,21 +556,19 @@ const Products = () => {
                 <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-700 p-1 rounded-lg">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-md transition-all duration-200 ${
-                      viewMode === 'grid' 
-                        ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm' 
-                        : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
-                    }`}
+                    className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'grid'
+                      ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm'
+                      : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                      }`}
                   >
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-md transition-all duration-200 ${
-                      viewMode === 'list' 
-                        ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm' 
-                        : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
-                    }`}
+                    className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'list'
+                      ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm'
+                      : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                      }`}
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -579,15 +583,14 @@ const Products = () => {
 
             {/* Products Grid/List */}
             {sortedProducts.length > 0 ? (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
+              <div className={`grid gap-6 ${viewMode === 'grid'
+                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                : 'grid-cols-1'
+                }`}>
                 {sortedProducts.map((product, index) => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={product} 
+                  <ProductCard
+                    key={product.id}
+                    product={product}
                     viewMode={viewMode}
                   />
                 ))}
