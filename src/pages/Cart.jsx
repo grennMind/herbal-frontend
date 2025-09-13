@@ -68,6 +68,9 @@ const Cart = () => {
     setCouponCode('');
   };
 
+  // Convert all prices to UGX (1 USD = 3800 UGX)
+  const convertToUGX = (usd) => Math.round(usd * 3800);
+
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal > 50 ? 0 : 5.99;
   const tax = subtotal * 0.08; // 8% tax
@@ -179,7 +182,7 @@ const Cart = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-neutral-900 dark:text-white mb-1 line-clamp-1">
+                          <h3 className="font-bold text-neutral-900 dark:text-white mb-1 line-clamp-1 font-['Montserrat']">
                             {item.name}
                           </h3>
                           <p className="text-sm text-neutral-600 dark:text-neutral-300 line-clamp-2">
@@ -188,11 +191,11 @@ const Cart = () => {
                         </div>
                         <div className="text-right ml-4">
                           <div className="text-lg font-bold text-neutral-900 dark:text-white">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            UGX {convertToUGX(item.price * item.quantity).toLocaleString()}
                           </div>
                           {item.compareAtPrice && (
                             <div className="text-sm text-neutral-400 dark:text-neutral-500 line-through">
-                              ${(item.compareAtPrice * item.quantity).toFixed(2)}
+                              UGX {convertToUGX(item.compareAtPrice * item.quantity).toLocaleString()}
                             </div>
                           )}
                         </div>
@@ -296,30 +299,30 @@ const Cart = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-neutral-600 dark:text-neutral-300">
                   <span>Subtotal ({cartItems.length} items)</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>UGX {convertToUGX(subtotal).toLocaleString()}</span>
                 </div>
                 
                 <div className="flex justify-between text-neutral-600 dark:text-neutral-300">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'Free' : `UGX ${convertToUGX(shipping).toLocaleString()}`}</span>
                 </div>
                 
                 <div className="flex justify-between text-neutral-600 dark:text-neutral-300">
                   <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>UGX {convertToUGX(tax).toLocaleString()}</span>
                 </div>
 
                 {couponApplied && (
                   <div className="flex justify-between text-green-600 dark:text-green-400 font-medium">
                     <span>Coupon Discount</span>
-                    <span>-${couponDiscount.toFixed(2)}</span>
+                    <span>-UGX {convertToUGX(couponDiscount).toLocaleString()}</span>
                   </div>
                 )}
 
                 <div className="border-t border-neutral-200 dark:border-neutral-600 pt-3">
                   <div className="flex justify-between text-lg font-bold text-neutral-900 dark:text-white">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>UGX {convertToUGX(total).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -336,15 +339,17 @@ const Cart = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
                   <Truck className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <span>Free shipping on orders over $50</span>
+                  <span>Free shipping on orders over UGX {convertToUGX(50).toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Checkout Button */}
-              <button className="w-full btn btn-primary btn-lg">
-                <CreditCard className="mr-2 h-5 w-5" />
-                Proceed to Checkout
-              </button>
+              <Link to="/checkout" className="block w-full">
+                <button className="w-full btn btn-primary btn-lg">
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Proceed to Checkout
+                </button>
+              </Link>
 
               {/* Additional Info */}
               <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-4">

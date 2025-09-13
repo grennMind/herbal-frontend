@@ -92,7 +92,7 @@ const Home = () => {
       className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800 home-wheat"
       style={{
         paddingTop: '100px',
-        backgroundImage: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://i.pinimg.com/1200x/07/93/2a/07932ab86b0b6c0f7197db770c74f139.jpg')",
+        backgroundImage: "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://i.pinimg.com/1200x/07/93/2a/07932ab86b0b6c0f7197db770c74f139.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

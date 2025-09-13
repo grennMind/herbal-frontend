@@ -14,7 +14,8 @@ import {
   Search,
   Bell,
   Sun,
-  Moon
+  Moon,
+  Home
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -66,7 +67,7 @@ const Navbar = () => {
   };
 
   const navigation = [
-    { name: 'Home', href: '/', icon: Leaf },
+    { name: 'Home', href: '/', icon: Home },
     { name: 'Products', href: '/products', icon: Package },
     { name: 'Plant Scanner', href: '/plant-scanner', icon: Leaf },
     { name: 'Symptom Checker', href: '/symptom-checker', icon: BookOpen },
@@ -105,8 +106,8 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
               <Leaf className="h-6 w-6 text-white" />
             </div>
-            <div className="hidden sm:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+            <div>
+              <h1 className="text-xl font-bold text-green-700">
                 HerbalMarket
               </h1>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Natural Wellness</p>
@@ -326,6 +327,23 @@ const Navbar = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+      
+      {/* HERBAL MARKET and Search Bar */}
+      <div className="bg-white border-b border-gray-200 py-2">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between">
+            <h1 className="text-2xl font-bold text-green-700 mb-2 md:mb-0">HERBAL MARKET</h1>
+            <div className="relative w-full md:w-96">
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   );
