@@ -15,6 +15,9 @@ import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
 import aiRoutes from './routes/ai.js';
 import paymentRoutes from './routes/payments.js';
+import researchRoutes from './routes/research.js';
+import uploadRoutes from './routes/uploads.js';
+import knowledgeRoutes from './routes/knowledge.js';
 
 // Import database
 import { sequelize } from './config/database.js';
@@ -72,6 +75,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/research', researchRoutes);
+app.use('/api/uploads', uploadRoutes);
+app.use('/api/knowledge', knowledgeRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

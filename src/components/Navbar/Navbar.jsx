@@ -71,6 +71,7 @@ const Navbar = () => {
     { name: 'Plant Scanner', href: '/plant-scanner', icon: Leaf },
     { name: 'Symptom Checker', href: '/symptom-checker', icon: BookOpen },
     { name: 'AI Recommendations', href: '/ai-recommendations', icon: BookOpen },
+    { name: 'Research Hub', href: '/research', icon: BookOpen },
   ];
 
   const userMenuItems = [
