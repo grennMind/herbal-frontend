@@ -11,10 +11,16 @@ const ProductCard = ({ product, viewMode, onAddToCart, onWishlist, onQuickView }
       >
         <div className="flex gap-6">
           {/* Product Image */}
-          <div className="w-32 h-32 bg-wheat rounded-xl flex items-center justify-center flex-shrink-0">
-            {product.image ? (
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-xl" />
-            ) : (
+          <div 
+            className="w-full h-full flex items-center justify-center bg-cover bg-center rounded-xl"
+            style={{
+              backgroundImage: product.image ? `url(${product.image})` : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundColor: product.image ? 'transparent' : 'wheat'
+            }}
+          >
+            {!product.image && (
               <Package className="h-12 w-12 text-amber-800/60" />
             )}
           </div>
@@ -102,14 +108,18 @@ const ProductCard = ({ product, viewMode, onAddToCart, onWishlist, onQuickView }
       className="bg-wheat rounded-2xl shadow-lg border border-amber-100 overflow-hidden hover:shadow-xl transition-all duration-300 group"
     >
       {/* Product Image */}
-      <div className="relative h-48 bg-wheat">
-        {product.image ? (
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
+      <div 
+        className="relative h-48"
+        style={{
+          backgroundImage: product.image 
+            ? `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${product.image})` 
+            : 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(https://static.vecteezy.com/system/resources/previews/017/607/403/non_2x/blur-abstract-image-with-shining-lights-green-bokeh-background-vector.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundColor: 'wheat'
+        }}
+      >
+        {!product.image && (
           <div className="w-full h-full flex items-center justify-center">
             <Package className="h-16 w-16 text-amber-800/30" />
           </div>

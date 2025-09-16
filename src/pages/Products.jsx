@@ -228,16 +228,9 @@ const Products = () => {
   return (
     <div 
       className="min-h-screen pt-24 relative"
-      style={{
-        backgroundImage: "url('https://i.pinimg.com/736x/a7/43/46/a743467110479b7b01728be06451be68.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      style={{ backgroundColor: '#88E788' }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-60" style={{ zIndex: 0 }}></div>
-      <div className="container relative" style={{ zIndex: 1 }}>
+      <div className="container relative">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -276,15 +269,15 @@ const Products = () => {
             animate={{ opacity: 1, x: 0 }}
             className="w-full lg:w-80"
           >
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 sticky top-32">
+            <div className="bg-[#1B5E20] text-white rounded-2xl shadow-lg p-6 sticky top-32">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold flex items-center gap-2 text-neutral-900 dark:text-white">
-                  <SlidersHorizontal className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                <h2 className="text-xl font-semibold flex items-center gap-2 text-white">
+                  <SlidersHorizontal className="h-5 w-5 text-white" />
                   Filters
                 </h2>
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                  className="text-sm text-white/80 hover:text-white font-medium transition-colors"
                 >
                   Clear All
                 </button>
@@ -293,7 +286,7 @@ const Products = () => {
               <div className="space-y-6">
                 {/* Category Filter */}
                 <div>
-                  <label className="form-label">Categories</label>
+                  <label className="form-label text-white">Categories</label>
                   <select
                     className="form-input"
                     value={filters.category}
@@ -310,7 +303,7 @@ const Products = () => {
 
                 {/* Price Range Filter */}
                 <div>
-                  <label className="form-label">Price Range</label>
+                  <label className="form-label text-white">Price Range</label>
                   <select
                     className="form-input"
                     value={filters.priceRange}
@@ -332,17 +325,20 @@ const Products = () => {
                     id="organicOnly"
                     checked={filters.organicOnly}
                     onChange={(e) => setFilters({ ...filters, organicOnly: e.target.checked })}
-                    className="form-checkbox"
+                    className="form-checkbox h-5 w-5 rounded border-white/50 bg-white/10 text-white focus:ring-white/50"
                   />
-                  <label htmlFor="organicOnly" className="text-sm font-medium flex items-center gap-2 text-neutral-700 dark:text-neutral-300">
-                    <Leaf className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <label
+                    htmlFor="organicOnly"
+                    className="text-sm font-medium flex items-center gap-2 text-white/90"
+                  >
+                    <Leaf className="h-4 w-4 text-white" />
                     Organic Only
                   </label>
                 </div>
 
                 {/* Sort Filter */}
                 <div>
-                  <label className="form-label">Sort By</label>
+                  <label className="form-label text-white">Sort By</label>
                   <select
                     className="form-input"
                     value={filters.sortBy}
@@ -357,10 +353,10 @@ const Products = () => {
                 </div>
 
                 {/* Results Count */}
-                <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Showing <span className="font-semibold text-neutral-900 dark:text-white">{sortedProducts.length}</span> of{' '}
-                    <span className="font-semibold text-neutral-900 dark:text-white">{products.length}</span> products
+                <div className="pt-4 border-t border-white/20">
+                  <p className="text-sm text-white/80">
+                    Showing <span className="font-semibold text-white">{filteredProducts.length}</span> of{' '}
+                    <span className="font-semibold text-white">{products.length}</span> products
                   </p>
                 </div>
               </div>

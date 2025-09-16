@@ -12,14 +12,13 @@ import PlantScanner from './pages/PlantScanner';
 import SymptomChecker from './pages/SymptomChecker';
 import AIRecommendations from './pages/AIRecommendations';
 import PaymentSuccess from './pages/PaymentSuccess';
-import Checkout from './pages/Checkout';
 
 const App = () => {
   return (
     <Router>
       <div className="min-h-screen">
         <Navbar />
-        <main className="pt-[20px]">
+        <main style={{ paddingTop: '130px' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
@@ -31,7 +30,6 @@ const App = () => {
             <Route path="/plant-scanner" element={<PlantScanner />} />
             <Route path="/symptom-checker" element={<SymptomChecker />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
-            <Route path="/checkout" element={<Checkout />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
           </Routes>
         </main>

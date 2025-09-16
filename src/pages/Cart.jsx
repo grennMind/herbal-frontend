@@ -344,12 +344,13 @@ const Cart = () => {
               </div>
 
               {/* Checkout Button */}
-              <Link to="/checkout" className="block w-full">
-                <button className="w-full btn btn-primary btn-lg">
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Proceed to Checkout
-                </button>
-              </Link>
+              <button 
+                onClick={() => window.location.href = '/Checkout.html'}
+                className="w-full btn btn-primary btn-lg"
+              >
+                <CreditCard className="mr-2 h-5 w-5" />
+                Proceed to Checkout
+              </button>
 
               {/* Additional Info */}
               <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-4">

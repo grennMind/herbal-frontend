@@ -71,7 +71,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 pt-40">
+    <div className="min-h-screen pt-40" style={{ backgroundColor: '#1B5E20' }}>
       <div className="container">
         {/* Breadcrumb */}
         <motion.div
@@ -102,7 +102,7 @@ const ProductDetail = () => {
           >
             {/* Main Image */}
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-              <div className="w-full h-96 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 to-neutral-600 flex items-center justify-center">
+              <div className="w-full h-96 bg-white dark:bg-neutral-800 flex items-center justify-center">
                 <div className="text-center">
                   <Leaf className="h-24 w-24 text-neutral-400 dark:text-neutral-500 mx-auto mb-4" />
                   <p className="text-neutral-500 dark:text-neutral-400">Product Image</p>
@@ -117,7 +117,7 @@ const ProductDetail = () => {
                   key={index}
                   className="bg-white dark:bg-neutral-800 rounded-xl shadow-md border border-neutral-200 dark:border-neutral-700 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
                 >
-                  <div className="w-full h-24 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 to-neutral-600 flex items-center justify-center">
+<div className="w-full h-24 bg-white dark:bg-neutral-800 flex items-center justify-center">
                     <Leaf className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
                   </div>
                 </div>
