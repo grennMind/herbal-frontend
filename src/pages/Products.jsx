@@ -228,7 +228,7 @@ const Products = () => {
   return (
     <div 
       className="min-h-screen pt-24 relative"
-      style={{ backgroundColor: '#88E788' }}
+      style={{ backgroundColor: '#88E788', }}
     >
       <div className="container relative">
         {/* Header Section */}
@@ -237,7 +237,7 @@ const Products = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <div className="text-center mb-8">
+          <div className="text-center mb-8" style={{paddingTop:'40px',}}>
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
               Herbal Products
             </h1>

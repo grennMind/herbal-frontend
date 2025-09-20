@@ -91,12 +91,12 @@ const Home = () => {
     <div
       className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800 home-wheat"
       style={{
-        paddingTop: '100px',
+        paddingTop: '0px',
         backgroundImage: "linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://i.pinimg.com/1200x/07/93/2a/07932ab86b0b6c0f7197db770c74f139.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: 'fixed',
       }}
     >
       {/* Hero Section */}
@@ -110,7 +110,7 @@ const Home = () => {
               transition={{ duration: 0.8 }}
               className="text-center lg:text-left text-white"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: '#F5DEB3' }}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: '#F5DEB3', paddingTop:50}}>
                 <span style={{ color: '#F5DEB3' }}>
                   Natural Wellness
                 </span>
@@ -166,10 +166,10 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section><br/>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white dark:bg-neutral-800">
+      <section className="py-16 dark:bg-neutral-800" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -226,14 +226,14 @@ const Home = () => {
                   className="group"
                 >
                   <Link to={feature.href} className="block">
-                    <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-2 border border-neutral-200 dark:border-neutral-700">
+                    <div className=" dark:bg-neutral-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-2 border border-neutral-200 dark:border-neutral-700" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                       <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="h-8 w-8 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold text-primary-600 dark:text-primary-400 mb-3 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-300">
+                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gray-100 transition-colors duration-300">
                         {feature.title}
                       </h3>
-                      <p className="text-primary-600 dark:text-primary-400 leading-relaxed">
+                      <p className="text-white leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -243,10 +243,10 @@ const Home = () => {
             })}
           </div>
         </div>
-      </section>
+      </section><br/>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-white dark:bg-neutral-800">
+      <section className="py-20  dark:bg-neutral-800"  style={{ backgroundColor:'rgb(7, 145, 60)' }}>
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Benefits Content */}
@@ -283,22 +283,22 @@ const Home = () => {
             >
               <div className="bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/20 dark:to-primary-800/20 rounded-3xl p-8">
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-lg">
+                  <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <TrendingUp className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
                     <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Growing Community</h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">Join thousands of wellness enthusiasts</p>
                   </div>
-                  <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-lg">
+                  <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Award className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
                     <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Quality Assured</h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">All products verified and tested</p>
                   </div>
-                  <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-lg">
+                  <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Globe className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
                     <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Global Reach</h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">Shipping to 50+ countries</p>
                   </div>
-                  <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-lg">
+                  <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Shield className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
                     <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Secure Platform</h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">Your data is safe with us</p>
@@ -308,7 +308,7 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section><br/>
 
       {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-br from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-800">
@@ -336,7 +336,7 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-lg border border-neutral-200 dark:border-neutral-700"
+                className=" dark:bg-neutral-800 rounded-2xl p-8 shadow-lg border border-neutral-200 dark:border-neutral-700" style={{ backgroundColor:'rgb(8, 167, 69)' }}
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -363,7 +363,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section><br/>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-primary-600 to-primary-700">
@@ -385,14 +385,14 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/register"
-                className="btn bg-white text-primary-600 hover:bg-neutral-100 btn-lg inline-flex items-center"
+                className="btn bg-success text-primary-600 hover:bg-neutral-100 btn-lg inline-flex items-center"
               >
                 Get Started Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link
                 to="/products"
-                className="btn btn-outline border-white text-white hover:bg-white hover:text-primary-600 btn-lg inline-flex items-center"
+                className="btn btn-outline border-[rgb(8, 167, 69)] text-success hover:bg-success hover:text-primary-600 btn-lg inline-flex items-center"
               >
                 Browse Products
                 <Package className="ml-2 h-5 w-5" />
@@ -400,7 +400,7 @@ const Home = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section><br /><br />
     </div>
   );
 };

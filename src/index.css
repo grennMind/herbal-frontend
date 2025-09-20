@@ -47,20 +47,20 @@ body {
 /* ===== NAVBAR SPACING FIX ===== */
 /* Ensure all page containers have proper spacing below the fixed navbar */
 .min-h-screen {
-  padding-top: 100px !important;
-  /* 100px = 6.25rem - optimal spacing below navbar */
+  padding-top: 0 !important;
+  /* Reset spacing below navbar */
 }
 
 /* Additional spacing rules for pages */
 .page-container {
-  padding-top: 100px !important;
+  padding-top: 0 !important;
 }
 
 /* Force spacing for all main content areas */
 main,
 .main-content,
 .page-content {
-  padding-top: 100px !important;
+  padding-top: 180px !important;
 }
 
 /* Ensure navbar is above all content */

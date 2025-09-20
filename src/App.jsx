@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home';
-import Products from './pages/Products';
+import Products from './pages/product/product';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
@@ -18,7 +18,7 @@ const App = () => {
     <Router>
       <div className="min-h-screen">
         <Navbar />
-        <main style={{ paddingTop: '130px' }}>
+        <main>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />

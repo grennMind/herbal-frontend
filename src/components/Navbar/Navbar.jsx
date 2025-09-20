@@ -12,23 +12,23 @@ const Navbar = () => {
       right: 0,
       zIndex: 1000,
       backgroundColor: 'white',
-      padding: '20px 0 10px 0',
+      padding: '0',
       border: 'none',
       lineHeight: 'normal'
     }}>
       {/* Top Navigation */}
-      <div className="top-nav" style={{ margin: 0, padding: 0 }}>
+      <div className="top-nav" style={{ margin: 0, padding: 20 }}>
         <div className="container">
           <div className="d-flex justify-content-between align-items-center">
-            <Link className="navbar-brand" to="/">
+            <Link className="navbar-brand" to="/"style={{paddingRight:50}}>
               <i className="fas fa-leaf me-2"></i>HerbalMarket <br />
               <small className="text-muted ms-2 d-none d-md-inline">Natural Wellness</small>
             </Link>
 
-            <div className="d-flex nav-search me-3" style={{ width: '50%' }}>
+            <div className="d-flex nav-search me-3" style={{ width: '50%',borderRadius:'5px' }}>
               <input className="form-control border-0" type="search" placeholder="What are you looking for?"
                 aria-label="Search" />
-              <button className="btn btn-green px-3" type="submit">
+              <button className="btn btn-green px-3" type="submit" style={{borderRadius:0}}>
                 <i className="fas fa-search"></i>
               </button>
             </div>
@@ -42,8 +42,31 @@ const Navbar = () => {
                 <i className="fas fa-user me-1"></i> Sign In
               </Link>
 
-              <Link to="/register" className="btn btn-outline-secondary btn-sm me-4">
+              <Link 
+                to="/register" 
+                className="btn btn-sm me-4" 
+                style={{
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  textDecoration: 'none',
+                  transition: 'background-color 0.3s',
+                  ':hover': {
+                    backgroundColor: '#c82333',
+                    color: 'white'
+                  }
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgb(221, 17, 10)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc3545'}
+              >
                 <i className="fas fa-user-plus me-1"></i> Create Account
+              </Link>
+              <Link
+                to="/sell"
+                className="btn btn-green btn-sm"
+                style={{ marginLeft: '8px' }}
+              >
+                <i className="fas fa-store me-1"></i> Sell with HERBAL MARKET
               </Link>
             </div>
           </div>
@@ -59,7 +82,7 @@ const Navbar = () => {
 
           <div className="collapse navbar-collapse" id="mainNav">
             <ul className="navbar-nav me-auto">
-              <li className="nav-item" style={{ fontSize: '200px' }}>
+              <li className="nav-item">
                 <Link className="nav-link" to="/">
                   <i className="fas fa-home me-1"></i> Home
                 </Link>
@@ -141,7 +164,7 @@ const Navbar = () => {
         .nav-link {
           color: #666;
           font-size: 20px;
-          padding: 0.9rem 1.0rem;
+          padding: 0.5rem 0.8rem;
         }
 
         .nav-link:hover {
