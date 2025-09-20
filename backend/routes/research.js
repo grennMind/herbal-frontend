@@ -1,182 +1,218 @@
-import express from 'express';
-import { Op } from 'sequelize';
-import { authenticate, authorize, optionalAuth } from '../middleware/auth.js';
-import { ResearchPost, Comment, Herb, Disease, User } from '../models/index.js';
+// routes/research.js
+import express from "express";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
+import supabase, { supabaseAdmin } from "../config/supabase.js";
 
 const router = express.Router();
 
-// Create research post
-router.post('/', authenticate, async (req, res) => {
+// ----------------------
+// Create a research post
+// ----------------------
+router.post("/", authenticate, async (req, res) => {
   try {
-    const { title, abstract, content, references, attachments, relatedHerbId, relatedDiseaseId } = req.body;
-
-    if (!title || !content) {
-      return res.status(400).json({ success: false, message: 'Title and content are required' });
-    }
-
-    const post = await ResearchPost.create({
+    const {
       title,
       abstract,
       content,
-      references: references || [],
-      attachments: attachments || [],
-      relatedHerbId: relatedHerbId || null,
-      relatedDiseaseId: relatedDiseaseId || null,
-      authorId: req.user.id,
-      status: 'published',
-      isVerified: ['researcher', 'herbalist', 'admin'].includes(req.user.userType) || false
-    });
+      references,
+      attachments,
+      relatedHerbId,
+      relatedDiseaseId,
+    } = req.body;
 
-    const created = await ResearchPost.findByPk(post.id, {
-      include: [
-        { model: User, as: 'author', attributes: ['id', 'name', 'userType'] },
-        { model: Herb, as: 'herb', attributes: ['id', 'name', 'scientificName'] },
-        { model: Disease, as: 'disease', attributes: ['id', 'name'] }
-      ]
-    });
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and content are required",
+      });
+    }
 
-    res.status(201).json({ success: true, data: { post: created } });
-  } catch (error) {
-    console.error('Create research post error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    const { data, error } = await supabase
+      .from("research_posts")
+      .insert([
+        {
+          title,
+          abstract,
+          content,
+          references: references || [],
+          attachments: attachments || [],
+          relatedHerbId: relatedHerbId || null,
+          relatedDiseaseId: relatedDiseaseId || null,
+          authorId: req.user.id,
+          status: "published",
+          isVerified: ["researcher", "herbalist", "admin"].includes(
+            req.user.userType
+          ),
+        },
+      ])
+      .select("*")
+      .single();
+
+    if (error) throw error;
+
+    res.status(201).json({ success: true, data: { post: data } });
+  } catch (err) {
+    console.error("Create research post error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
+// ----------------------
 // List/search research posts
-router.get('/', optionalAuth, async (req, res) => {
+// ----------------------
+router.get("/", optionalAuth, async (req, res) => {
   try {
     const { page = 1, limit = 10, q, herbId, diseaseId, verified } = req.query;
-    const offset = (page - 1) * limit;
-    const where = {};
+    const from = (page - 1) * limit;
+    const to = from + parseInt(limit) - 1;
+
+    let query = supabase
+      .from("research_posts")
+      .select("*")
+      .order("createdAt", { ascending: false })
+      .range(from, to);
 
     if (q) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${q}%` } },
-        { abstract: { [Op.iLike]: `%${q}%` } },
-        { content: { [Op.iLike]: `%${q}%` } }
-      ];
+      query = query.ilike("title", `%${q}%`); // Supabase supports ilike
     }
-    if (herbId) where.relatedHerbId = herbId;
-    if (diseaseId) where.relatedDiseaseId = diseaseId;
-    if (verified === 'true') where.isVerified = true;
+    if (herbId) query = query.eq("relatedHerbId", herbId);
+    if (diseaseId) query = query.eq("relatedDiseaseId", diseaseId);
+    if (verified === "true") query = query.eq("isVerified", true);
 
-    const posts = await ResearchPost.findAndCountAll({
-      where,
-      include: [
-        { model: User, as: 'author', attributes: ['id', 'name', 'userType'] },
-        { model: Herb, as: 'herb', attributes: ['id', 'name', 'scientificName'] },
-        { model: Disease, as: 'disease', attributes: ['id', 'name'] },
-        { model: Comment, as: 'comments', include: [{ model: User, as: 'author', attributes: ['id', 'name'] }] }
-      ],
-      order: [['createdAt', 'DESC']],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
+    const { data, error, count } = await query;
+
+    if (error) throw error;
 
     res.json({
       success: true,
       data: {
-        posts: posts.rows,
+        posts: data,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.ceil(posts.count / limit),
-          totalItems: posts.count,
-          itemsPerPage: parseInt(limit)
-        }
-      }
+          totalPages: Math.ceil((count || data.length) / limit),
+          totalItems: count || data.length,
+          itemsPerPage: parseInt(limit),
+        },
+      },
     });
-  } catch (error) {
-    console.error('List research posts error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+  } catch (err) {
+    console.error("List research posts error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
-// Get single post with threaded comments
-router.get('/:id', optionalAuth, async (req, res) => {
+// ----------------------
+// Get single post with comments
+// ----------------------
+router.get("/:id", optionalAuth, async (req, res) => {
   try {
-    const post = await ResearchPost.findByPk(req.params.id, {
-      include: [
-        { model: User, as: 'author', attributes: ['id', 'name', 'userType'] },
-        { model: Herb, as: 'herb', attributes: ['id', 'name', 'scientificName'] },
-        { model: Disease, as: 'disease', attributes: ['id', 'name'] },
-        {
-          model: Comment,
-          as: 'comments',
-          include: [
-            { model: User, as: 'author', attributes: ['id', 'name'] },
-            { model: Comment, as: 'replies', include: [{ model: User, as: 'author', attributes: ['id', 'name'] }] }
-          ]
-        }
-      ]
-    });
+    const { data: post, error } = await supabase
+      .from("research_posts")
+      .select("*")
+      .eq("id", req.params.id)
+      .single();
 
-    if (!post) return res.status(404).json({ success: false, message: 'Post not found' });
-    res.json({ success: true, data: { post } });
-  } catch (error) {
-    console.error('Get research post error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    if (error) throw error;
+    if (!post)
+      return res.status(404).json({ success: false, message: "Post not found" });
+
+    // Fetch comments (threaded)
+    const { data: comments, error: commentError } = await supabase
+      .from("comments")
+      .select("*")
+      .eq("postId", req.params.id);
+
+    if (commentError) console.warn("Comments fetch warning:", commentError.message);
+
+    res.json({ success: true, data: { post, comments } });
+  } catch (err) {
+    console.error("Get research post error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
-// Update post (author or admin)
-router.put('/:id', authenticate, async (req, res) => {
+// ----------------------
+// Update post (author/admin)
+// ----------------------
+router.put("/:id", authenticate, async (req, res) => {
   try {
-    const post = await ResearchPost.findByPk(req.params.id);
-    if (!post) return res.status(404).json({ success: false, message: 'Post not found' });
+    const { data: post, error } = await supabase
+      .from("research_posts")
+      .select("authorId")
+      .eq("id", req.params.id)
+      .single();
+
+    if (error) throw error;
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
     const isOwner = post.authorId === req.user.id;
-    const isAdmin = req.user.userType === 'admin';
+    const isAdmin = req.user.userType === "admin";
     if (!isOwner && !isAdmin) {
-      return res.status(403).json({ success: false, message: 'Access denied' });
+      return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    const updatable = ['title', 'abstract', 'content', 'references', 'attachments', 'relatedHerbId', 'relatedDiseaseId', 'status', 'isVerified'];
-    const data = {};
-    updatable.forEach((k) => { if (req.body[k] !== undefined) data[k] = req.body[k]; });
+    const updatable = [
+      "title",
+      "abstract",
+      "content",
+      "references",
+      "attachments",
+      "relatedHerbId",
+      "relatedDiseaseId",
+      "status",
+      "isVerified",
+    ];
 
-    await post.update(data);
-    res.json({ success: true, message: 'Post updated', data: { post } });
-  } catch (error) {
-    console.error('Update research post error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    const dataToUpdate = {};
+    updatable.forEach((k) => {
+      if (req.body[k] !== undefined) dataToUpdate[k] = req.body[k];
+    });
+
+    const { data: updatedPost, error: updateError } = await supabase
+      .from("research_posts")
+      .update(dataToUpdate)
+      .eq("id", req.params.id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    res.json({ success: true, message: "Post updated", data: { post: updatedPost } });
+  } catch (err) {
+    console.error("Update research post error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
+// ----------------------
 // Add comment or reply
-router.post('/:id/comments', authenticate, async (req, res) => {
+// ----------------------
+router.post("/:id/comments", authenticate, async (req, res) => {
   try {
     const { content, parentId } = req.body;
-    if (!content) return res.status(400).json({ success: false, message: 'Content is required' });
+    if (!content)
+      return res.status(400).json({ success: false, message: "Content is required" });
 
-    const post = await ResearchPost.findByPk(req.params.id);
-    if (!post) return res.status(404).json({ success: false, message: 'Post not found' });
+    const { data: comment, error } = await supabase
+      .from("comments")
+      .insert([
+        {
+          content,
+          parentId: parentId || null,
+          postId: req.params.id,
+          authorId: req.user.id,
+        },
+      ])
+      .select()
+      .single();
 
-    // Optional: validate parent comment belongs to this post
-    if (parentId) {
-      const parent = await Comment.findByPk(parentId);
-      if (!parent || parent.postId !== post.id) {
-        return res.status(400).json({ success: false, message: 'Invalid parent comment' });
-      }
-    }
+    if (error) throw error;
 
-    const comment = await Comment.create({
-      content,
-      parentId: parentId || null,
-      postId: post.id,
-      authorId: req.user.id
-    });
-
-    const created = await Comment.findByPk(comment.id, {
-      include: [{ model: User, as: 'author', attributes: ['id', 'name'] }]
-    });
-
-    res.status(201).json({ success: true, data: { comment: created } });
-  } catch (error) {
-    console.error('Create comment error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(201).json({ success: true, data: { comment } });
+  } catch (err) {
+    console.error("Create comment error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
 export default router;
-
-

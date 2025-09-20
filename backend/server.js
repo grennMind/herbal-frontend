@@ -1,3 +1,4 @@
+// server.js
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -5,8 +6,6 @@ import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -19,12 +18,8 @@ import researchRoutes from './routes/research.js';
 import uploadRoutes from './routes/uploads.js';
 import knowledgeRoutes from './routes/knowledge.js';
 
-// Import database
-import { sequelize } from './config/database.js';
+// Import error handler
 import { errorHandler } from './middleware/errorHandler.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(import.meta.url);
 
 // Load environment variables
 dotenv.config();
@@ -34,8 +29,8 @@ const PORT = process.env.PORT || 5000;
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.'
 });
 
@@ -51,14 +46,14 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(limiter);
 
-// Special handling for Stripe webhook (needs raw body)
+// Special handling for Stripe webhook (raw body)
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
-// Regular middleware for other routes
+// Regular middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -87,45 +82,20 @@ app.use('*', (req, res) => {
   });
 });
 
-// Error handling middleware
+// Error handling
 app.use(errorHandler);
 
-// Database connection and server startup
-const startServer = async () => {
-  try {
-    // Test database connection
-    await sequelize.authenticate();
-    console.log('✅ Database connection established successfully.');
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📱 API Health: http://localhost:${PORT}/api/health`);
+  console.log(`🌿 Environment: ${process.env.NODE_ENV}`);
+});
 
-    // Sync database models
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: true });
-      console.log('✅ Database models synchronized.');
-    }
-
-    // Start server
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📱 API Health: http://localhost:${PORT}/api/health`);
-      console.log(`🌿 Environment: ${process.env.NODE_ENV}`);
-    });
-
-  } catch (error) {
-    console.error('❌ Unable to start server:', error);
-    process.exit(1);
-  }
-};
-
-// Handle unhandled promise rejections
+// Optional: handle unhandled rejections / exceptions
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Promise Rejection:', err);
-  process.exit(1);
 });
-
-// Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
-  process.exit(1);
 });
-
-startServer();
