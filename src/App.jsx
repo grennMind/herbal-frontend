@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar";
+import TopSearchBar from "./components/Topbar/TopSearchBar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -27,6 +28,7 @@ const App = () => {
     <Router>
       <div className="min-h-screen">
         <Navbar />
+        <TopSearchBar />
         <main className="pt-20"> {/* Padding-top for sticky navbar */}
           <Routes>
             {/* Public Pages */}

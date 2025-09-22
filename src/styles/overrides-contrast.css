@@ -1,0 +1,33 @@
+/* Contrast and readability overrides without changing functionality */
+
+/* Headings stronger contrast */
+h1, h2, h3 { color: var(--neutral-900); }
+.dark h1, .dark h2, .dark h3 { color: var(--neutral-50); }
+
+/* Body text slightly brighter on dark, darker on light */
+body, p, li, label, input, textarea, select { color: var(--neutral-800); }
+.dark body, .dark p, .dark li, .dark label, .dark input, .dark textarea, .dark select { color: var(--neutral-100); }
+
+/* Cards and panels default foreground */
+.card-enhanced { color: var(--neutral-900); }
+.dark .card-enhanced { color: var(--neutral-100); }
+
+/* Links: improve contrast and hover */
+a { color: var(--primary-700); }
+a:hover { color: var(--primary-800); }
+.dark a { color: var(--primary-300); }
+.dark a:hover { color: var(--primary-200); }
+
+/* Buttons primary */
+button, .btn-primary { background: var(--primary-600); color: #fff; }
+button:hover, .btn-primary:hover { background: var(--primary-700); }
+
+/* Inputs: ensure readable foreground */
+input::placeholder, textarea::placeholder { color: var(--neutral-400); }
+.dark input::placeholder, .dark textarea::placeholder { color: var(--neutral-500); }
+
+/* Navbar link contrast */
+nav .nav-links a { color: var(--neutral-800); }
+nav .nav-links a:hover, nav .nav-links a.active { color: var(--primary-600); }
+.dark nav .nav-links a { color: var(--neutral-100); }
+.dark nav .nav-links a:hover, .dark nav .nav-links a.active { color: var(--primary-300); }
