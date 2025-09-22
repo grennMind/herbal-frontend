@@ -12,6 +12,7 @@ import PlantScanner from './pages/PlantScanner';
 import SymptomChecker from './pages/SymptomChecker';
 import AIRecommendations from './pages/AIRecommendations';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Research from './pages/Research';
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/plant-scanner" element={<PlantScanner />} />
             <Route path="/symptom-checker" element={<SymptomChecker />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
+            <Route path="/research" element={<Research />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
           </Routes>
         </main>

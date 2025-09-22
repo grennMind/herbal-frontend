@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Navbar = () => {
   return (
@@ -112,6 +110,11 @@ const Navbar = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/ai-recommendations">
                   <i className="fas fa-robot me-1"></i> AI Recommendations
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/research">
+                  <i className="fas fa-flask me-1"></i> Research
                 </Link>
               </li>
             </ul>

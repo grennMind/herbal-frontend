@@ -1,8 +1,6 @@
 // CartPage.jsx
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import "bootstrap/dist/css/bootstrap.min.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./CartPage.css"; // put your <style> content here
 
 const CartPage = () => {
