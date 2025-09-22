@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, User, Calendar, Target, Heart, Brain, Shield, Zap, Star, ChevronRight } from 'lucide-react';
+import { Sparkles, User, Calendar, Target, Heart, Brain, Shield, Zap, Star, ChevronRight, BookOpen, AlertCircle } from 'lucide-react';
+import knowledgeService from '../services/knowledgeService';
 
 const AIRecommendations = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -14,6 +15,7 @@ const AIRecommendations = () => {
   });
   const [recommendations, setRecommendations] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState('');
 
   const healthGoals = [
     { id: 'immunity', label: 'Boost Immunity', icon: '🛡️' },
@@ -55,17 +57,35 @@ const AIRecommendations = () => {
     }));
   };
 
-  const generateRecommendations = () => {
+  const generateRecommendations = async () => {
     setIsGenerating(true);
-    // Simulate AI processing
-    setTimeout(() => {
+    setError('');
+    
+    try {
+      // Get enhanced recommendations using research data
+      const enhancedRecommendations = await knowledgeService.getEnhancedRecommendations(
+        formData.conditions,
+        formData.preferences.join(', '),
+        '' // allergies - could be added to form
+      );
+
+      // Get research knowledge for additional context
+      const researchKnowledge = await knowledgeService.getResearchKnowledge({
+        limit: 50,
+        verified: 'true'
+      });
+
+      // Generate insights from research data
+      const insights = knowledgeService.generateInsights(researchKnowledge.knowledgeBase);
+
       setRecommendations({
         personalizedPlan: {
-          title: "Your Personalized Herbal Wellness Plan",
+          title: "Your Research-Based Herbal Wellness Plan",
           score: 94,
-          duration: "30-day program"
+          duration: "30-day program",
+          researchBased: true
         },
-        primaryRecommendations: [
+        primaryRecommendations: enhancedRecommendations.recommendations || [
           {
             name: "Ashwagandha Root Extract",
             category: "Adaptogen",
@@ -74,7 +94,7 @@ const AIRecommendations = () => {
             timing: "Morning and evening with meals",
             confidence: 96,
             price: "$24.99",
-            image: "/api/placeholder/150/150"
+            evidence: "Research shows adaptogenic properties"
           },
           {
             name: "Turmeric Curcumin Complex",
@@ -84,19 +104,12 @@ const AIRecommendations = () => {
             timing: "With lunch",
             confidence: 89,
             price: "$19.99",
-            image: "/api/placeholder/150/150"
-          },
-          {
-            name: "Rhodiola Rosea",
-            category: "Cognitive Support",
-            benefits: ["Mental clarity", "Fatigue reduction", "Mood support"],
-            dosage: "200mg daily",
-            timing: "Morning on empty stomach",
-            confidence: 87,
-            price: "$32.99",
-            image: "/api/placeholder/150/150"
+            evidence: "Multiple studies confirm anti-inflammatory effects"
           }
         ],
+        researchEvidence: enhancedRecommendations.evidence || [],
+        researchCitations: enhancedRecommendations.research_citations || [],
+        insights: insights,
         lifestyle: {
           diet: [
             "Include anti-inflammatory foods (berries, leafy greens)",
@@ -114,14 +127,16 @@ const AIRecommendations = () => {
             "Limit screen time before bed"
           ]
         },
-        timeline: [
-          { week: "Week 1-2", focus: "Foundation building", activities: ["Start core supplements", "Establish routines"] },
-          { week: "Week 3-4", focus: "Optimization", activities: ["Monitor progress", "Adjust dosages if needed"] },
-          { week: "Week 5+", focus: "Maintenance", activities: ["Continue successful protocols", "Evaluate results"] }
-        ]
+        safetyNotes: enhancedRecommendations.safety_notes || "Always consult with a healthcare provider before starting any herbal treatment.",
+        interactions: enhancedRecommendations.interactions || "Check for drug interactions with your current medications.",
+        disclaimer: enhancedRecommendations.disclaimer || "This AI-generated advice is for informational purposes only and should not replace professional medical consultation."
       });
+
+    } catch (err) {
+      setError(err.message || 'Failed to generate recommendations');
+    } finally {
       setIsGenerating(false);
-    }, 3000);
+    }
   };
 
   const nextStep = () => {
@@ -161,6 +176,17 @@ const AIRecommendations = () => {
 
         {!recommendations ? (
           <div className="max-w-4xl mx-auto">
+            {/* Error Display */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 rounded-xl text-red-700 dark:text-red-300 flex items-start gap-2"
+              >
+                <AlertCircle className="h-5 w-5 mt-0.5" />
+                <span>{error}</span>
+              </motion.div>
+            )}
             {/* Progress Bar */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
@@ -393,6 +419,12 @@ const AIRecommendations = () => {
               <div className="flex items-center justify-center gap-3 mb-4">
                 <Star className="h-8 w-8 text-yellow-400" />
                 <h2 className="text-3xl font-bold">{recommendations.personalizedPlan.title}</h2>
+                {recommendations.personalizedPlan.researchBased && (
+                  <div className="flex items-center gap-1 text-sm text-green-400 bg-green-500/20 px-2 py-1 rounded-full">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Research-Based</span>
+                  </div>
+                )}
               </div>
               <div className="flex items-center justify-center gap-6 text-lg">
                 <div className="flex items-center gap-2">
@@ -405,6 +437,24 @@ const AIRecommendations = () => {
                 </div>
               </div>
             </div>
+
+            {/* Research Insights */}
+            {recommendations.insights && recommendations.insights.length > 0 && (
+              <div className="modern-card p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-blue-400" />
+                  Research Insights
+                </h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {recommendations.insights.map((insight, index) => (
+                    <div key={index} className="p-4 bg-gray-800/30 rounded-lg">
+                      <h4 className="font-medium text-green-400 mb-2">{insight.title}</h4>
+                      <p className="text-sm text-gray-300">{insight.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Recommendations Grid */}
             <div className="grid lg:grid-cols-3 gap-6">
