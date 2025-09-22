@@ -1,77 +1,107 @@
-import React, { useState, useEffect } from "react";
-import PostContent from "../components/research/PostContent";
-import PostActions from "../components/research/PostActions";
-import CommentList from "../components/research/Comments/CommentList";
-import NewCommentForm from "../components/research/Comments/NewCommentForm";
-import NewResearchForm from "../components/research/NewResearchForm";
-import { fetchResearchPosts } from "../api/research"; // Make sure this exists
+// src/pages/ResearchHub.jsx
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import researchService from "../services/researchService";
+import ResearchFilters from "../components/research/filters/ResearchFilters";
+import ResearchPostCard from "../components/research/cards/ResearchPostCard";
+import ResearchPostForm from "../components/research/forms/ResearchPostForm";
+import { X, Plus } from "lucide-react";
 
 const ResearchHub = () => {
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [filterValues, setFilterValues] = useState({ herbs: [], diseases: [], status: [] });
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = async () => {
+  // Fetch posts from Supabase
+  const fetchPosts = async () => {
     try {
-      setIsLoading(true);
-      setError("");
-
-      const data = await fetchResearchPosts(); // API should return array of posts
-      setPosts(data || []);
+      setLoading(true);
+      const data = await researchService.filterPosts(filterValues);
+      setPosts(data);
     } catch (err) {
-      setError(err.message || "Failed to load research posts");
+      console.error("Error fetching posts:", err);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, [filterValues]);
+
+  const handleApplyFilters = (filters) => {
+    setFilterValues(filters);
+  };
+
+  const handleAddPost = (newPost) => {
+    setPosts([newPost, ...posts]);
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 p-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-neutral-900 dark:text-white">
-          Research Hub
-        </h1>
-
-        {/* New Research Form */}
-        <div className="mb-12">
-          <NewResearchForm onPostCreated={loadPosts} />
+    <div className="relative min-h-screen p-4 md:p-8 pt-28">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-green-700">Research Hub</h1>
+        <div className="flex gap-2 mt-4 md:mt-0">
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="flex items-center gap-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all shadow-md"
+          >
+            Filters
+          </button>
+          <button
+            onClick={() => setFormOpen(true)}
+            className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all shadow-md"
+          >
+            <Plus className="h-5 w-5" />
+            Add New Research
+          </button>
         </div>
+      </div>
 
-        {/* Loading & Error Handling */}
-        {isLoading && <p className="text-center text-neutral-500">Loading posts...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-
-        {/* Research Posts */}
-        {!isLoading && posts.length === 0 && (
-          <p className="text-center text-neutral-500">No research posts yet.</p>
+      {/* Research Post Form */}
+      <AnimatePresence>
+        {formOpen && (
+          <ResearchPostForm
+            isOpen={formOpen}
+            onClose={() => setFormOpen(false)}
+            onAdd={handleAddPost}
+          />
         )}
+      </AnimatePresence>
 
-        <div className="space-y-10">
-          {posts.map((post) => (
-            <article key={post.id} className="bg-white dark:bg-neutral-800 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700">
-              {/* Post Content */}
-              <PostContent post={post} />
+      {/* Research Filters */}
+      <ResearchFilters
+        herbs={[]} // Fetch herbs from Supabase if you want dynamic options
+        diseases={[]} // Fetch diseases if needed
+        isOpen={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        onApply={handleApplyFilters}
+      />
 
-              {/* Post Actions */}
-              <PostActions post={post} />
-
-              {/* Comments Section */}
-              <div className="mt-8">
-                <h2 className="text-xl font-semibold mb-4 text-neutral-900 dark:text-white">
-                  Discussion
-                </h2>
-
-                <NewCommentForm postId={post.id} onCommentPosted={loadPosts} />
-
-                <CommentList comments={post.comments || []} />
-              </div>
-            </article>
-          ))}
-        </div>
+      {/* Posts Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {loading ? (
+          <p className="text-gray-500 col-span-full text-center">Loading...</p>
+        ) : posts.length === 0 ? (
+          <p className="text-gray-500 col-span-full text-center">No research posts found.</p>
+        ) : (
+          posts.map((post) => (
+            <motion.div
+              key={post.id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 10px 20px rgba(0,0,0,0.12)" }}
+              className="w-full"
+            >
+              <ResearchPostCard post={post} />
+            </motion.div>
+          ))
+        )}
       </div>
     </div>
   );
