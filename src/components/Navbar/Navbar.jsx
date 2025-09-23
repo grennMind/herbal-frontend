@@ -6,6 +6,7 @@ import { getCurrentUser } from '../../services/userService';
 const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [hasResearchAccess, setHasResearchAccess] = useState(false);
+  const [user, setUser] = useState(null);
 
 
   // Sticky on scroll
@@ -25,13 +26,15 @@ const Navbar = () => {
 
     updateCartCount();
 
-    // Determine research access (researcher role only) without changing visuals
+    // Determine user and research access (herbalist or researcher)
     (async () => {
       try {
         const u = await getCurrentUser();
+        setUser(u || null);
         const role = u?.profile?.user_type || u?.user_type;
-        setHasResearchAccess(role === 'researcher');
+        setHasResearchAccess(role === 'researcher' || role === 'herbalist');
       } catch (_) {
+        setUser(null);
         setHasResearchAccess(false);
       }
     })();
@@ -45,7 +48,7 @@ const Navbar = () => {
     };
   }, []);
 
-  const researchTarget = hasResearchAccess ? '/research' : '/dashboard';
+  const researchHubPath = '/research-hub';
 
   return (
     <div style={{
@@ -160,11 +163,21 @@ const Navbar = () => {
                   <i className="fas fa-robot me-1"></i> AI Recommendations
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink to={researchTarget} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                  <i className="fas fa-flask me-1"></i> Research
-                </NavLink>
-              </li>
+              {hasResearchAccess && (
+                <li className="nav-item">
+                  <NavLink to={researchHubPath} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                    <i className="fas fa-flask me-1"></i> Research Hub
+                  </NavLink>
+                </li>
+              )}
+
+              {user && (
+                <li className="nav-item">
+                  <NavLink to="/dashboard" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                    <i className="fas fa-user-circle me-1"></i> Profile
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
         </div>

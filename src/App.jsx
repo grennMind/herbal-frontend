@@ -14,6 +14,8 @@ import SymptomChecker from './pages/SymptomChecker';
 import AIRecommendations from './pages/AIRecommendations';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Research from './pages/Research';
+import ResearchPost from './pages/ResearchPost';
+import ResearchNew from './pages/ResearchNew';
 import TopSearchBar from './components/Topbar/TopSearchBar';
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
@@ -43,12 +45,21 @@ const App = () => {
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
 
             <Route path="/research" element={<Research />} />
+            <Route path="/research/:id" element={<ResearchPost />} />
+            <Route
+              path="/research/new"
+              element={
+                <PrivateRoute roles={['researcher']}>
+                  <ResearchNew />
+                </PrivateRoute>
+              }
+            />
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route
               path="/research-hub"
               element={
-                <PrivateRoute roles={['researcher','admin','herbalist']}>
+                <PrivateRoute roles={['researcher','herbalist']}>
                   <ResearchHub />
                 </PrivateRoute>
               }

@@ -1,6 +1,6 @@
 // File: src/components/research/cards/ResearchPostCard.jsx
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { MessageSquare, ArrowBigUp } from "lucide-react";
 
 const ResearchPostCard = ({ post, onClick }) => {
   return (
@@ -15,20 +15,20 @@ const ResearchPostCard = ({ post, onClick }) => {
         <h2 className="text-lg font-bold text-gray-900 dark:text-white">{post.title}</h2>
         <span
           className={`px-2 py-1 text-sm rounded-full font-semibold ${
-            post.status === "Published"
+            (post.status || '').toLowerCase() === "published"
               ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
-              : post.status === "Draft"
+              : (post.status || '').toLowerCase() === "draft"
               ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
               : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
           }`}
         >
-          {post.status}
+          {(post.status || '').charAt(0).toUpperCase() + (post.status || '').slice(1)}
         </span>
       </div>
 
       {/* Author & Date */}
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-        By {post.author?.name || "Unknown"} • {new Date(post.createdAt).toLocaleDateString()}
+        {new Date(post.created_at || post.createdAt || Date.now()).toLocaleDateString()}
       </p>
 
       {/* Abstract */}
@@ -56,10 +56,16 @@ const ResearchPostCard = ({ post, onClick }) => {
         ))}
       </div>
 
-      {/* Likes */}
-      <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-        <Heart className="w-4 h-4 text-red-500" />
-        <span>{post.likesCount || 0} Likes</span>
+      {/* Votes and Comments */}
+      <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
+        <div className="flex items-center gap-1">
+          <ArrowBigUp className="w-4 h-4 text-blue-500" />
+          <span>{post.votes_count ?? 0}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <MessageSquare className="w-4 h-4 text-gray-400" />
+          <span>{post.comments_count ?? 0}</span>
+        </div>
       </div>
     </motion.div>
   );
