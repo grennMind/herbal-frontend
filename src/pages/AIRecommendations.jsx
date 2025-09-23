@@ -165,10 +165,10 @@ const AIRecommendations = () => {
           <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <Brain className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             AI Health Recommendations
           </h1>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+          <p className="text-xl text-white max-w-3xl mx-auto">
             Get personalized herbal recommendations based on your health goals, conditions, and preferences. 
             Our AI analyzes your needs and suggests the most effective natural solutions.
           </p>
@@ -190,10 +190,10 @@ const AIRecommendations = () => {
             {/* Progress Bar */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-gray-400">
+                <span className="text-sm font-medium text-primary-200">
                   Step {currentStep} of 4
                 </span>
-                <span className="text-sm font-medium text-purple-400">
+                <span className="text-sm font-medium text-primary-200">
                   {Math.round((currentStep / 4) * 100)}% Complete
                 </span>
               </div>
@@ -217,13 +217,13 @@ const AIRecommendations = () => {
                   exit={{ opacity: 0, x: -20 }}
                   className="modern-card p-8"
                 >
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                     <User className="h-6 w-6 text-purple-400" />
                     Basic Information
                   </h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Age</label>
+                      <label className="block text-sm font-medium text-white mb-2">Age</label>
                       <input
                         type="number"
                         value={formData.age}
@@ -233,7 +233,7 @@ const AIRecommendations = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Gender</label>
+                      <label className="block text-sm font-medium text-white mb-2">Gender</label>
                       <select
                         value={formData.gender}
                         onChange={(e) => handleInputChange('gender', e.target.value)}
@@ -258,11 +258,11 @@ const AIRecommendations = () => {
                   exit={{ opacity: 0, x: -20 }}
                   className="modern-card p-8"
                 >
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                     <Target className="h-6 w-6 text-purple-400" />
                     Health Goals
                   </h2>
-                  <p className="text-gray-300 mb-6">Select your primary health and wellness goals:</p>
+                  <p className="text-primary-200 mb-6">Select your primary health and wellness goals:</p>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {healthGoals.map((goal) => (
                       <motion.button
@@ -293,14 +293,14 @@ const AIRecommendations = () => {
                   className="modern-card p-8 space-y-8"
                 >
                   <div>
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                       <Heart className="h-6 w-6 text-purple-400" />
                       Health Conditions & Lifestyle
                     </h2>
                     
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium mb-3">
+                        <label className="block text-sm font-medium text-white mb-3">
                           Any existing health conditions? (Optional)
                         </label>
                         <div className="grid md:grid-cols-2 gap-2">
@@ -321,7 +321,7 @@ const AIRecommendations = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-3">Lifestyle</label>
+                        <label className="block text-sm font-medium text-white mb-3">Lifestyle</label>
                         <div className="space-y-3">
                           {lifestyles.map((lifestyle) => (
                             <button
@@ -333,8 +333,8 @@ const AIRecommendations = () => {
                                   : 'bg-gray-800/30 border-gray-600 hover:border-blue-500/30'
                               }`}
                             >
-                              <div className="font-medium">{lifestyle.label}</div>
-                              <div className="text-sm text-gray-400">{lifestyle.desc}</div>
+                              <div className="font-medium text-white">{lifestyle.label}</div>
+                              <div className="text-sm text-primary-200">{lifestyle.desc}</div>
                             </button>
                           ))}
                         </div>
@@ -352,11 +352,11 @@ const AIRecommendations = () => {
                   exit={{ opacity: 0, x: -20 }}
                   className="modern-card p-8"
                 >
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                     <Shield className="h-6 w-6 text-purple-400" />
                     Preferences
                   </h2>
-                  <p className="text-gray-300 mb-6">Select your product preferences:</p>
+                  <p className="text-primary-200 mb-6">Select your product preferences:</p>
                   <div className="grid md:grid-cols-2 gap-4">
                     {preferences.map((pref) => (
                       <button
@@ -418,7 +418,7 @@ const AIRecommendations = () => {
             <div className="modern-card p-8 text-center">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <Star className="h-8 w-8 text-yellow-400" />
-                <h2 className="text-3xl font-bold">{recommendations.personalizedPlan.title}</h2>
+                <h2 className="text-3xl font-bold text-white">{recommendations.personalizedPlan.title}</h2>
                 {recommendations.personalizedPlan.researchBased && (
                   <div className="flex items-center gap-1 text-sm text-green-400 bg-green-500/20 px-2 py-1 rounded-full">
                     <BookOpen className="h-4 w-4" />
@@ -428,7 +428,7 @@ const AIRecommendations = () => {
               </div>
               <div className="flex items-center justify-center gap-6 text-lg">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-400">Match Score:</span>
+                  <span className="text-primary-200">Match Score:</span>
                   <span className="font-bold text-green-400">{recommendations.personalizedPlan.score}%</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -441,7 +441,7 @@ const AIRecommendations = () => {
             {/* Research Insights */}
             {recommendations.insights && recommendations.insights.length > 0 && (
               <div className="modern-card p-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-blue-400" />
                   Research Insights
                 </h3>
@@ -449,7 +449,7 @@ const AIRecommendations = () => {
                   {recommendations.insights.map((insight, index) => (
                     <div key={index} className="p-4 bg-gray-800/30 rounded-lg">
                       <h4 className="font-medium text-green-400 mb-2">{insight.title}</h4>
-                      <p className="text-sm text-gray-300">{insight.description}</p>
+                      <p className="text-sm text-primary-200">{insight.description}</p>
                     </div>
                   ))}
                 </div>
@@ -476,12 +476,12 @@ const AIRecommendations = () => {
                     </div>
                   </div>
                   
-                  <h3 className="text-xl font-bold mb-3">{product.name}</h3>
+                  <h3 className="text-xl font-bold text-white mb-3">{product.name}</h3>
                   
                   <div className="space-y-3 mb-4">
                     <div>
                       <h4 className="text-sm font-medium text-green-400 mb-1">Benefits:</h4>
-                      <ul className="text-sm text-gray-300 space-y-1">
+                      <ul className="text-sm text-primary-200 space-y-1">
                         {product.benefits.map((benefit, i) => (
                           <li key={i} className="flex items-center gap-2">
                             <span className="w-1 h-1 bg-green-400 rounded-full" />
@@ -510,10 +510,10 @@ const AIRecommendations = () => {
             {/* Lifestyle Recommendations */}
             <div className="grid md:grid-cols-3 gap-6">
               <div className="modern-card p-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   🥗 Diet Recommendations
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-primary-200">
                   {recommendations.lifestyle.diet.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
@@ -524,10 +524,10 @@ const AIRecommendations = () => {
               </div>
               
               <div className="modern-card p-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   🏃 Exercise Plan
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-primary-200">
                   {recommendations.lifestyle.exercise.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
@@ -538,10 +538,10 @@ const AIRecommendations = () => {
               </div>
               
               <div className="modern-card p-6">
-                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   🧘 Healthy Habits
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-primary-200">
                   {recommendations.lifestyle.habits.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5 flex-shrink-0" />

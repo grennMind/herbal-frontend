@@ -1,29 +1,35 @@
+// File: src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Navbar from "./components/Navbar/Navbar";
+import TopSearchBar from "./components/Topbar/TopSearchBar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import Login from "./pages/user/Login";
+import Register from "./pages/user/Register";
+import Dashboard from "./pages/user/Dashboard";
 import PlantScanner from "./pages/PlantScanner";
 import SymptomChecker from "./pages/SymptomChecker";
 import AIRecommendations from "./pages/AIRecommendations";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import ResearchHub from "./pages/ResearchHub";
-import ResearchPostDetail from "./pages/ResearchPostDetail";
+import Profile from "./pages/user/Profile";
+import AdminDashboard from "./pages/user/AdminDashboard";
 import NotFound from "./pages/NotFound";
-import PrivateRoute from "./components/PrivateRoute";
-import PublicRoute from "./components/PublicRoute";
+
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 const App = () => {
   return (
     <Router>
       <div className="min-h-screen">
         <Navbar />
-        <main className="pt-20"> {/* Add padding-top for sticky navbar */}
+        <TopSearchBar />
+        <main className="pt-20"> {/* Padding-top for sticky navbar */}
           <Routes>
             {/* Public Pages */}
             <Route path="/" element={<Home />} />
@@ -34,8 +40,14 @@ const App = () => {
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
             <Route path="/plant-scanner" element={<PlantScanner />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/research" element={<ResearchHub />} />
-            <Route path="/research/:id" element={<ResearchPostDetail />} />
+            <Route
+              path="/research"
+              element={
+                <PrivateRoute roles={['researcher','admin','herbalist']}>
+                  <ResearchHub />
+                </PrivateRoute>
+              }
+            />
 
             {/* Authentication */}
             <Route
@@ -55,12 +67,30 @@ const App = () => {
               }
             />
 
-            {/* Protected */}
+            {/* Protected User Pages */}
             <Route
               path="/dashboard"
               element={
-                <PrivateRoute>
+                <PrivateRoute roles={['buyer','seller','herbalist','researcher']}>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute roles={['buyer','seller','herbalist','researcher']}>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Admin Only */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <PrivateRoute roles={['admin']}>
+                  <AdminDashboard />
                 </PrivateRoute>
               }
             />
