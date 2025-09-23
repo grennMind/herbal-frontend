@@ -43,6 +43,10 @@
   color: var(--neutral-500);
 }
 
+.dark .topbar-search .icon {
+  color: #A7F3D0; /* mint */
+}
+
 .topbar-search input {
   flex: 1;
   border: none;
@@ -50,6 +54,14 @@
   background: transparent;
   color: inherit;
   font-size: 0.95rem;
+}
+
+.topbar-search input::placeholder {
+  color: var(--neutral-400);
+}
+
+.dark .topbar-search input::placeholder {
+  color: #A7F3D0; /* mint */
 }
 
 .topbar-btn {
@@ -78,17 +90,22 @@
   gap: 6px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(79,70,229,0.08);
-  color: #4F46E5;
+  background: rgba(16,185,129,0.12); /* emerald */
+  color: #10B981; /* emerald */
   text-decoration: none;
   font-weight: 600;
 }
 
 .dark .topbar-quicklinks .qlink {
-  background: rgba(99,102,241,0.12);
-  color: #A5B4FC;
+  background: rgba(52,211,153,0.12); /* emerald */
+  color: #A7F3D0; /* mint */
 }
 
 .topbar-quicklinks .qlink:hover {
-  background: rgba(79,70,229,0.15);
+  background: rgba(16,185,129,0.2);
+}
+
+.dark .topbar-quicklinks .qlink:hover {
+  background: rgba(52,211,153,0.18);
+  color: #34D399; /* emerald */
 }

@@ -419,10 +419,10 @@ const Products = () => {
           className="mb-12"
         >
           <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Herbal Products
             </h1>
-            <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+            <p className="text-xl text-white max-w-3xl mx-auto">
               Discover our curated collection of premium herbal remedies and natural wellness products. 
               Each item is carefully selected and verified for quality and authenticity.
             </p>
@@ -431,13 +431,13 @@ const Products = () => {
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400 dark:text-neutral-500" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary-200" />
               <input
                 type="text"
                 placeholder="Search for herbs, supplements, teas, or specific health benefits..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 text-lg border border-neutral-300 dark:border-neutral-600 rounded-2xl focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 dark:focus:border-primary-400 transition-all duration-200 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
+                className="w-full pl-12 pr-4 py-4 text-lg border border-neutral-300 dark:border-neutral-600 rounded-2xl focus:ring-4 focus:ring-primary-100 dark:focus:ring-primary-900/20 focus:border-primary-500 dark:focus:border-primary-400 transition-all duration-200 bg-white dark:bg-neutral-800 text-white placeholder-primary-200"
               />
             </div>
           </div>
@@ -452,13 +452,13 @@ const Products = () => {
           >
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 sticky top-32">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold flex items-center gap-2 text-neutral-900 dark:text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-2 text-white">
                   <SlidersHorizontal className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   Filters
                 </h2>
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                  className="text-sm text-primary-200 hover:text-primary-300 font-medium transition-colors"
                 >
                   Clear All
                 </button>
@@ -467,7 +467,7 @@ const Products = () => {
               <div className="space-y-6">
                 {/* Category Filter */}
                 <div>
-                  <label className="form-label">Categories</label>
+                  <label className="form-label text-white">Categories</label>
                   <select 
                     className="form-input"
                     value={filters.category}
@@ -484,7 +484,7 @@ const Products = () => {
 
                 {/* Price Range Filter */}
                 <div>
-                  <label className="form-label">Price Range</label>
+                  <label className="form-label text-white">Price Range</label>
                   <select 
                     className="form-input"
                     value={filters.priceRange}
@@ -508,7 +508,7 @@ const Products = () => {
                     onChange={(e) => setFilters({...filters, organicOnly: e.target.checked})}
                     className="form-checkbox"
                   />
-                  <label htmlFor="organicOnly" className="text-sm font-medium flex items-center gap-2 text-neutral-700 dark:text-neutral-300">
+                  <label htmlFor="organicOnly" className="text-sm font-medium flex items-center gap-2 text-white">
                     <Leaf className="h-4 w-4 text-green-600 dark:text-green-400" />
                     Organic Only
                   </label>
@@ -516,7 +516,7 @@ const Products = () => {
 
                 {/* Sort Filter */}
                 <div>
-                  <label className="form-label">Sort By</label>
+                  <label className="form-label text-white">Sort By</label>
                   <select 
                     className="form-input"
                     value={filters.sortBy}
@@ -532,9 +532,9 @@ const Products = () => {
 
                 {/* Results Count */}
                 <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Showing <span className="font-semibold text-neutral-900 dark:text-white">{sortedProducts.length}</span> of{' '}
-                    <span className="font-semibold text-neutral-900 dark:text-white">{products.length}</span> products
+                  <p className="text-sm text-primary-200">
+                    Showing <span className="font-semibold text-white">{sortedProducts.length}</span> of{' '}
+                    <span className="font-semibold text-white">{products.length}</span> products
                   </p>
                 </div>
               </div>
@@ -546,14 +546,14 @@ const Products = () => {
             {/* View Mode Toggle */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">View:</span>
+                <span className="text-sm font-medium text-white">View:</span>
                 <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-700 p-1 rounded-lg">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'grid' 
                         ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm' 
-                        : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                        : 'text-primary-200 hover:text-primary-300'
                     }`}
                   >
                     <Grid className="h-4 w-4" />
@@ -563,7 +563,7 @@ const Products = () => {
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'list' 
                         ? 'bg-white dark:bg-neutral-600 text-primary-600 dark:text-primary-400 shadow-sm' 
-                        : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                        : 'text-primary-200 hover:text-primary-300'
                     }`}
                   >
                     <List className="h-4 w-4" />
@@ -571,7 +571,7 @@ const Products = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+              <div className="flex items-center gap-2 text-sm text-primary-200">
                 <Truck className="h-4 w-4" />
                 <span>Free shipping on orders over $50</span>
               </div>
@@ -599,10 +599,10 @@ const Products = () => {
                 className="text-center py-16"
               >
                 <div className="w-24 h-24 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Search className="h-12 w-12 text-neutral-400 dark:text-neutral-500" />
+                  <Search className="h-12 w-12 text-primary-200" />
                 </div>
-                <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">No products found</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-md mx-auto">
+                <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
+                <p className="text-primary-200 mb-6 max-w-md mx-auto">
                   Try adjusting your filters or search terms to find what you're looking for.
                 </p>
                 <button

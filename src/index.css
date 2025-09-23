@@ -19,15 +19,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--neutral-50);
-  color: var(--neutral-900);
+  color: #0f172a; /* slate-900 equivalent for strong readability on light */
   line-height: var(--leading-normal);
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 .dark body {
   background-color: var(--neutral-950);
-  color: var(--neutral-100);
+  color: #ffffff; /* explicit pure white to avoid dim text from inverted neutrals */
 }
+
+/* Global dark-text enforcement: ensure readable foreground everywhere */
+.dark main,
+.dark .min-h-screen,
+.dark .page-container,
+.dark .container,
+.dark .container-system,
+.dark .page-content,
+.dark *:not(svg):not(path) {
+  color: #ffffff !important;
+}
+
+/* Link accents in dark mode */
+.dark a { color: #A7F3D0 !important; }
+.dark a:hover { color: #34D399 !important; }
 
 /* ===== NAVBAR SPACING FIX ===== */
 /* Ensure all page containers have proper spacing below the fixed navbar */

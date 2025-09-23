@@ -43,7 +43,7 @@ const ResearchHub = () => {
     <div className="relative min-h-screen p-4 md:p-8 pt-28">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-green-700">Research Hub</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-white">Research Hub</h1>
         <div className="flex gap-2 mt-4 md:mt-0">
           <button
             onClick={() => setFiltersOpen(true)}
@@ -84,9 +84,9 @@ const ResearchHub = () => {
       {/* Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {loading ? (
-          <p className="text-gray-500 col-span-full text-center">Loading...</p>
+          <p className="text-primary-200 col-span-full text-center">Loading...</p>
         ) : posts.length === 0 ? (
-          <p className="text-gray-500 col-span-full text-center">No research posts found.</p>
+          <p className="text-primary-200 col-span-full text-center">No research posts found.</p>
         ) : (
           posts.map((post) => (
             <motion.div
