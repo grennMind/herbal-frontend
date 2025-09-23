@@ -1,27 +1,19 @@
-// File: src/App.jsx
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Navbar from "./components/Navbar/Navbar";
-import TopSearchBar from "./components/Topbar/TopSearchBar";
-import Home from "./pages/Home";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Login from "./pages/user/Login";
-import Register from "./pages/user/Register";
-import Dashboard from "./pages/user/Dashboard";
-import PlantScanner from "./pages/PlantScanner";
-import SymptomChecker from "./pages/SymptomChecker";
-import AIRecommendations from "./pages/AIRecommendations";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import ResearchHub from "./pages/ResearchHub";
-import Profile from "./pages/user/Profile";
-import AdminDashboard from "./pages/user/AdminDashboard";
-import NotFound from "./pages/NotFound";
-
-import PrivateRoute from "./routes/PrivateRoute";
-import PublicRoute from "./routes/PublicRoute";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import Home from './pages/Home';
+import Products from './pages/product/product';
+import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import PlantScanner from './pages/PlantScanner';
+import SymptomChecker from './pages/SymptomChecker';
+import AIRecommendations from './pages/AIRecommendations';
+import PaymentSuccess from './pages/PaymentSuccess';
+import Research from './pages/Research';
 
 const App = () => {
   return (
@@ -38,7 +30,9 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/symptom-checker" element={<SymptomChecker />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
-            <Route path="/plant-scanner" element={<PlantScanner />} />
+
+            <Route path="/research" element={<Research />} />
+
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route
               path="/research"

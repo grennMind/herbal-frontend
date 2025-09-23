@@ -1,124 +1,246 @@
-import { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, Brain, Leaf, LogIn, ChevronDown, BookOpen } from 'lucide-react';
-import userService from '../../services/userService';
-import './Navbar.css';
+
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
 
-  const navItems = [
-    { name: 'Products', path: '/products', icon: <ShoppingCart className="icon" /> },
-    { name: 'Symptom Checker', path: '/symptom-checker', icon: <Heart className="icon" /> },
-    { name: 'AI Recommendation', path: '/ai-recommendations', icon: <Brain className="icon" /> },
-    { name: 'Plant Scanner', path: '/plant-scanner', icon: <Leaf className="icon" /> },
-    { name: 'Research Hub', path: '/research', icon: <BookOpen className="icon" /> },
-  ];
 
   // Sticky on scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  // Fetch current user on mount
-  useEffect(() => {
-    const fetchUser = async () => {
+    const updateCartCount = () => {
       try {
-        const currentUser = await userService.getCurrentUser();
-        setUser(currentUser);
-      } catch {
-        setUser(null);
+        const cartPageItems = localStorage.getItem('cartPageItems');
+        const cartPageItemsCount = cartPageItems
+          ? JSON.parse(cartPageItems).reduce((sum, item) => sum + (item.qty || 0), 0)
+          : 0;
+        setCartCount(cartPageItemsCount);
+      } catch (e) {
+        setCartCount(0);
       }
     };
-    fetchUser();
+
+    updateCartCount();
+
+    window.addEventListener('storage', updateCartCount);
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
   }, []);
 
-  const handleLogout = async () => {
-    await userService.signOut();
-    setUser(null);
-    navigate('/login');
-  };
-
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <NavLink to="/" className="logo">
-        Herbal AI Hub
-      </NavLink>
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000,
+      backgroundColor: 'white',
+      padding: '0',
+      border: 'none',
+      lineHeight: 'normal'
+    }}>
+      {/* Top Navigation */}
+      <div className="top-nav" style={{ margin: 0, padding: 20 }}>
+        <div className="container">
+          <div className="d-flex justify-content-between align-items-center">
+            <Link className="navbar-brand" to="/"style={{paddingRight:50}}>
+              <i className="fas fa-leaf me-2"></i>HerbalMarket <br />
+              <small className="text-muted ms-2 d-none d-md-inline">Natural Wellness</small>
+            </Link>
 
-      <ul className={isOpen ? 'nav-links open' : 'nav-links'}>
-        {navItems.map(item => {
-          // Only show Research Hub if user has the right role
-          if (item.name === 'Research Hub') {
-            const role = user?.profile?.user_type || user?.user_type;
-            const allowed = ['researcher','admin','herbalist'];
-            if (!allowed.includes(role)) return null;
-          }
-          return (
-            <li key={item.name}>
-              <NavLink to={item.path} className={({ isActive }) => isActive ? 'active' : ''}>
-                {item.icon} {item.name}
-              </NavLink>
-            </li>
-          );
-        })}
+            <div className="d-flex nav-search me-3" style={{ width: '50%',borderRadius:'5px' }}>
+              <input className="form-control border-0" type="search" placeholder="What are you looking for?"
+                aria-label="Search" />
+              <button className="btn btn-green px-3" type="submit" style={{borderRadius:0}}>
+                <i className="fas fa-search"></i>
+              </button>
+            </div>
 
-        {/* User Account Dropdown */}
-        <li className="auth-dropdown">
-          <span onClick={() => setAuthOpen(!authOpen)}>
-            <LogIn className="icon" /> Account <ChevronDown className="icon-chevron" />
-          </span>
-          {authOpen && (
-            <ul className="dropdown">
-              {!user && (
-                <>
-                  <li>
-                    <NavLink to="/login">Login</NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/register">Sign Up</NavLink>
-                  </li>
-                </>
-              )}
-              {user && (
-                <>
-                  <li>
-                    {user.profile?.avatar && (
-                      <img src={user.profile.avatar} alt="avatar" className="navbar-avatar" />
-                    )}
-                    <span className="user-name">
-                      Hello, {user.profile?.name || user.email} ({user.profile?.user_type})
-                    </span>
-                  </li>
-                  {userService.isAdmin(user.profile) && (
-                    <li>
-                      <NavLink to="/admin-dashboard">Admin Dashboard</NavLink>
-                    </li>
-                  )}
-                  <li>
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
-                  </li>
-                </>
-              )}
-            </ul>
-          )}
-        </li>
-      </ul>
+            <div className="d-flex align-items-center">
+              <Link to="/cart" className="cart-icon me-3 text-decoration-none text-dark">
+                <i className="fas fa-shopping-cart fa-lg"></i>
+                {cartCount > 0 && (
+                  <span className="cart-count">{cartCount}</span>
+                )}
+              </Link>
+              <Link to="/login" className="btn btn-green btn-sm me-2">
+                <i className="fas fa-user me-1"></i> Sign In
+              </Link>
 
-      {/* Burger Menu for mobile */}
-      <div className="burger" onClick={() => setIsOpen(!isOpen)}>
-        <div className="line1"></div>
-        <div className="line2"></div>
-        <div className="line3"></div>
+              <Link 
+                to="/register" 
+                className="btn btn-sm me-4" 
+                style={{
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  textDecoration: 'none',
+                  transition: 'background-color 0.3s',
+                  ':hover': {
+                    backgroundColor: '#c82333',
+                    color: 'white'
+                  }
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgb(221, 17, 10)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc3545'}
+              >
+                <i className="fas fa-user-plus me-1"></i> Create Account
+              </Link>
+              <Link
+                to="/sell"
+                className="btn btn-green btn-sm"
+                style={{ marginLeft: '8px' }}
+              >
+                <i className="fas fa-store me-1"></i> Sell with HERBAL MARKET
+              </Link>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </nav>
+
+      {/* Main Navigation */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-black" style={{ borderBottom: '1px solid #33e407',}}>
+        <div className="container">
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <div className="collapse navbar-collapse" id="mainNav">
+            <ul className="navbar-nav me-auto">
+              <li className="nav-item">
+                <NavLink to="/" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} end>
+                  <i className="fas fa-home me-1"></i> Home
+                </NavLink>
+              </li>
+              <li className="nav-item dropdown">
+                <NavLink to="/products" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-seedling me-1"></i> Products
+                </NavLink>
+                <ul className="dropdown-menu" aria-labelledby="productsDropdown">
+                  <li><Link className="dropdown-item" to="/products">Medicinal Herbs</Link></li>
+                  <li><Link className="dropdown-item" to="/products">Essential Oils</Link></li>
+                  <li><Link className="dropdown-item" to="/products">Herbal Teas</Link></li>
+                  <li><Link className="dropdown-item" to="/products">Natural Supplements</Link></li>
+                  <li><Link className="dropdown-item" to="/products">Skincare Products</Link></li>
+                </ul>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/plant-scanner" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-camera me-1"></i> Plant Scanner
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/symptom-checker" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-stethoscope me-1"></i> Symptom Checker
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/ai-recommendations" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-robot me-1"></i> AI Recommendations
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/research" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-flask me-1"></i> Research
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {/* <p style={{ textAlign: 'center', color: 'white',backgroundColor: 'black',paddingTop: '20px',paddingBottom: '0px', fontWeight: 'bold', borderBottom: '1px solid #33e407' }}>
+        Learn, Treat, Research and Heal with the best HerbalMarket
+      </p> */}
+
+      <style jsx>{`
+        .navbar-brand {
+          color: #2E7D32 !important;
+          font-weight: bold;
+          font-size: 1.5rem;
+        }
+
+        .top-nav {
+          background-color: #f8f8f8;
+          border-bottom: 1px solid #33e407;
+          padding: 8px 0;
+        }
+
+        .nav-search {
+          border: 2px solid #4CAF50;
+          border-radius: 4px;
+        }
+
+        .nav-search .form-control:focus {
+          box-shadow: none;
+          border-color: #4CAF50;
+        }
+
+        .btn-green {
+          background-color: #4CAF50;
+          color: white;
+        }
+
+        .btn-green:hover {
+          background-color: #2E7D32;
+          color: white;
+        }
+
+        .nav-item {
+          font-weight: bold;
+          margin-left: 50px;
+        }
+
+        .nav-link {
+          color: #666;
+          font-size: 20px;
+          padding: 0.5rem 0.8rem;
+        }
+
+        .nav-link:hover {
+          color: #4CAF50;
+        }
+
+        .nav-link.active {
+          color: #ffffff !important;
+        }
+
+        .bottom-nav {
+          background-color: yellow;
+          padding: 8px 0;
+        }
+
+        .dropdown:hover .dropdown-menu {
+          display: block;
+          margin-top: 0;
+        }
+
+        .cart-icon {
+          position: relative;
+        }
+
+        .cart-count {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background-color: #ff6b6b;
+          color: white;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          font-size: 0.7rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+    </div>
   );
 };
 

@@ -62,8 +62,48 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    // Implement add to cart functionality
-    console.log('Adding to cart:', { ...product, quantity });
+    try {
+      // Update 'herbalCart' (uses 'quantity')
+      const legacyRaw = localStorage.getItem('herbalCart');
+      const legacy = legacyRaw ? JSON.parse(legacyRaw) : [];
+      const existingLegacy = legacy.find((item) => item.id === product.id);
+      if (existingLegacy) {
+        existingLegacy.quantity = (existingLegacy.quantity || 0) + quantity;
+      } else {
+        legacy.push({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          image: product.image,
+          price: product.price,
+          quantity: quantity,
+        });
+      }
+      localStorage.setItem('herbalCart', JSON.stringify(legacy));
+
+      // Update 'cartPageItems' (uses 'qty') for Cart.jsx page
+      const pageRaw = localStorage.getItem('cartPageItems');
+      const pageItems = pageRaw ? JSON.parse(pageRaw) : [];
+      const existingPage = pageItems.find((item) => item.id === product.id);
+      if (existingPage) {
+        existingPage.qty = (existingPage.qty || 0) + quantity;
+      } else {
+        pageItems.push({
+          id: product.id,
+          name: product.name,
+          desc: product.description,
+          img: product.image,
+          price: Math.round(product.price * 3800),
+          qty: quantity,
+        });
+      }
+      localStorage.setItem('cartPageItems', JSON.stringify(pageItems));
+
+      // Notify Navbar to update count immediately
+      window.dispatchEvent(new Event('cartUpdated'));
+    } catch (e) {
+      console.error('Failed to add to cart:', e);
+    }
   };
 
   const toggleWishlist = () => {
@@ -71,7 +111,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 pt-40">
+    <div className="min-h-screen pt-40" style={{ backgroundColor: '#1B5E20' }}>
       <div className="container">
         {/* Breadcrumb */}
         <motion.div
@@ -102,7 +142,7 @@ const ProductDetail = () => {
           >
             {/* Main Image */}
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-              <div className="w-full h-96 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 to-neutral-600 flex items-center justify-center">
+              <div className="w-full h-96 bg-white dark:bg-neutral-800 flex items-center justify-center">
                 <div className="text-center">
                   <Leaf className="h-24 w-24 text-neutral-400 dark:text-neutral-500 mx-auto mb-4" />
                   <p className="text-neutral-500 dark:text-neutral-400">Product Image</p>
@@ -117,7 +157,7 @@ const ProductDetail = () => {
                   key={index}
                   className="bg-white dark:bg-neutral-800 rounded-xl shadow-md border border-neutral-200 dark:border-neutral-700 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
                 >
-                  <div className="w-full h-24 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 to-neutral-600 flex items-center justify-center">
+<div className="w-full h-24 bg-white dark:bg-neutral-800 flex items-center justify-center">
                     <Leaf className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
                   </div>
                 </div>
