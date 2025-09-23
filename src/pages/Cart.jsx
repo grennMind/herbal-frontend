@@ -52,6 +52,7 @@ const CartPage = () => {
                 item.id === id ? { ...item, qty: item.qty + 1 } : item
             );
             localStorage.setItem('cartPageItems', JSON.stringify(next));
+            window.dispatchEvent(new Event('cartUpdated'));
             return next;
         });
     };
@@ -64,6 +65,7 @@ const CartPage = () => {
                     : item
             );
             localStorage.setItem('cartPageItems', JSON.stringify(next));
+            window.dispatchEvent(new Event('cartUpdated'));
             return next;
         });
     };
@@ -72,6 +74,7 @@ const CartPage = () => {
         setCartItems((items) => {
             const next = items.filter((item) => item.id !== id);
             localStorage.setItem('cartPageItems', JSON.stringify(next));
+            window.dispatchEvent(new Event('cartUpdated'));
             return next;
         });
     };

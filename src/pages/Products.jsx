@@ -202,6 +202,7 @@ const Products = () => {
     }
 
     localStorage.setItem('herbalCart', JSON.stringify(existingCart));
+    window.dispatchEvent(new Event('cartUpdated'));
     // You could add a toast notification here
   };
 

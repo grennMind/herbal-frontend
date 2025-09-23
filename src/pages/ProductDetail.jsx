@@ -62,8 +62,48 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    // Implement add to cart functionality
-    console.log('Adding to cart:', { ...product, quantity });
+    try {
+      // Update 'herbalCart' (uses 'quantity')
+      const legacyRaw = localStorage.getItem('herbalCart');
+      const legacy = legacyRaw ? JSON.parse(legacyRaw) : [];
+      const existingLegacy = legacy.find((item) => item.id === product.id);
+      if (existingLegacy) {
+        existingLegacy.quantity = (existingLegacy.quantity || 0) + quantity;
+      } else {
+        legacy.push({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          image: product.image,
+          price: product.price,
+          quantity: quantity,
+        });
+      }
+      localStorage.setItem('herbalCart', JSON.stringify(legacy));
+
+      // Update 'cartPageItems' (uses 'qty') for Cart.jsx page
+      const pageRaw = localStorage.getItem('cartPageItems');
+      const pageItems = pageRaw ? JSON.parse(pageRaw) : [];
+      const existingPage = pageItems.find((item) => item.id === product.id);
+      if (existingPage) {
+        existingPage.qty = (existingPage.qty || 0) + quantity;
+      } else {
+        pageItems.push({
+          id: product.id,
+          name: product.name,
+          desc: product.description,
+          img: product.image,
+          price: Math.round(product.price * 3800),
+          qty: quantity,
+        });
+      }
+      localStorage.setItem('cartPageItems', JSON.stringify(pageItems));
+
+      // Notify Navbar to update count immediately
+      window.dispatchEvent(new Event('cartUpdated'));
+    } catch (e) {
+      console.error('Failed to add to cart:', e);
+    }
   };
 
   const toggleWishlist = () => {

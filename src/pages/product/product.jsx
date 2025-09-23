@@ -174,6 +174,9 @@ const product = () => {
             }
             localStorage.setItem(storeKey, JSON.stringify(cartPage));
 
+            // Notify Navbar/cart badge to update immediately
+            window.dispatchEvent(new Event('cartUpdated'));
+
             // Do not auto-navigate; user will go to cart via navbar icon
             
         } catch (e) {

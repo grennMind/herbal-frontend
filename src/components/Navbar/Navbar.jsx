@@ -1,7 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const cartPageItems = localStorage.getItem('cartPageItems');
+        const cartPageItemsCount = cartPageItems
+          ? JSON.parse(cartPageItems).reduce((sum, item) => sum + (item.qty || 0), 0)
+          : 0;
+        setCartCount(cartPageItemsCount);
+      } catch (e) {
+        setCartCount(0);
+      }
+    };
+
+    updateCartCount();
+
+    window.addEventListener('storage', updateCartCount);
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
+
   return (
     <div style={{
       position: 'fixed',
@@ -34,7 +60,9 @@ const Navbar = () => {
             <div className="d-flex align-items-center">
               <Link to="/cart" className="cart-icon me-3 text-decoration-none text-dark">
                 <i className="fas fa-shopping-cart fa-lg"></i>
-                <span className="cart-count">3</span>
+                {cartCount > 0 && (
+                  <span className="cart-count">{cartCount}</span>
+                )}
               </Link>
               <Link to="/login" className="btn btn-green btn-sm me-2">
                 <i className="fas fa-user me-1"></i> Sign In
@@ -72,7 +100,7 @@ const Navbar = () => {
       </div>
 
       {/* Main Navigation */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-black" style={{ borderBottom: '1px solid #33e407' }}>
+      <nav className="navbar navbar-expand-lg navbar-light bg-black" style={{ borderBottom: '1px solid #33e407',}}>
         <div className="container">
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span className="navbar-toggler-icon"></span>
@@ -81,14 +109,14 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="mainNav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/">
+                <NavLink to="/" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} end>
                   <i className="fas fa-home me-1"></i> Home
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item dropdown">
-                <Link className="nav-link" to="/products">
+                <NavLink to="/products" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-seedling me-1"></i> Products
-                </Link>
+                </NavLink>
                 <ul className="dropdown-menu" aria-labelledby="productsDropdown">
                   <li><Link className="dropdown-item" to="/products">Medicinal Herbs</Link></li>
                   <li><Link className="dropdown-item" to="/products">Essential Oils</Link></li>
@@ -98,24 +126,24 @@ const Navbar = () => {
                 </ul>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/plant-scanner">
+                <NavLink to="/plant-scanner" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-camera me-1"></i> Plant Scanner
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/symptom-checker">
+                <NavLink to="/symptom-checker" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-stethoscope me-1"></i> Symptom Checker
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/ai-recommendations">
+                <NavLink to="/ai-recommendations" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-robot me-1"></i> AI Recommendations
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/research">
+                <NavLink to="/research" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-flask me-1"></i> Research
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -174,19 +202,13 @@ const Navbar = () => {
           color: #4CAF50;
         }
 
+        .nav-link.active {
+          color: #ffffff !important;
+        }
+
         .bottom-nav {
-          background-color: white;
+          background-color: yellow;
           padding: 8px 0;
-        }
-
-        .bottom-nav-link {
-          color: #999;
-          font-size: 0.85rem;
-          padding: 0.3rem 0.8rem;
-        }
-
-        .bottom-nav-link:hover {
-          color: #4CAF50;
         }
 
         .dropdown:hover .dropdown-menu {
