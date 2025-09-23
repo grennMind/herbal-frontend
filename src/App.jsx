@@ -21,6 +21,7 @@ import ResearchHub from './pages/ResearchHub';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/user/AdminDashboard';
 import NotFound from './pages/NotFound';
+import SupabaseHealth from './pages/health/SupabaseHealth';
 
 const App = () => {
   return (
@@ -35,6 +36,8 @@ const App = () => {
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
+            {/* Diagnostics */}
+            <Route path="/health/supabase" element={<SupabaseHealth />} />
             <Route path="/symptom-checker" element={<SymptomChecker />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
 
