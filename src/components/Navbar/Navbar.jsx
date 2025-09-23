@@ -1,10 +1,14 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
 
+
+  // Sticky on scroll
   useEffect(() => {
+
     const updateCartCount = () => {
       try {
         const cartPageItems = localStorage.getItem('cartPageItems');
@@ -97,6 +101,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
+
       </div>
 
       {/* Main Navigation */}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
@@ -19,20 +20,77 @@ const App = () => {
     <Router>
       <div className="min-h-screen">
         <Navbar />
-        <main>
+        <TopSearchBar />
+        <main className="pt-20"> {/* Padding-top for sticky navbar */}
           <Routes>
+            {/* Public Pages */}
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/plant-scanner" element={<PlantScanner />} />
             <Route path="/symptom-checker" element={<SymptomChecker />} />
             <Route path="/ai-recommendations" element={<AIRecommendations />} />
+
             <Route path="/research" element={<Research />} />
+
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route
+              path="/research"
+              element={
+                <PrivateRoute roles={['researcher','admin','herbalist']}>
+                  <ResearchHub />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Authentication */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
+
+            {/* Protected User Pages */}
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute roles={['buyer','seller','herbalist','researcher']}>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute roles={['buyer','seller','herbalist','researcher']}>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Admin Only */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <PrivateRoute roles={['admin']}>
+                  <AdminDashboard />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </div>

@@ -115,10 +115,12 @@ const Home = () => {
                   Natural Wellness
                 </span>
                 <br />
+
                 <span style={{ color: '#F5DEB3' }}>Meets Modern AI</span>
               </h1>
               <p className="text-xl mb-8 leading-relaxed" style={{ color: '#F5DEB3' }}>
                 Discover the power of herbal medicine enhanced by artificial intelligence.
+
                 Identify plants, check symptoms, and get personalized recommendations for your wellness journey.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -185,8 +187,8 @@ const Home = () => {
                   <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/20 dark:to-primary-800/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <Icon className="h-8 w-8 text-primary-600 dark:text-primary-400" />
                   </div>
-                  <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">{stat.number}</div>
-                  <div className="text-sm text-neutral-600 dark:text-neutral-400">{stat.label}</div>
+                  <div className="text-3xl font-bold text-white mb-2">{stat.number}</div>
+                  <div className="text-sm text-primary-200">{stat.label}</div>
                 </div>
               );
             })}
@@ -204,11 +206,13 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Everything You Need for Natural Wellness
             </h2>
+
             <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
               Our platform combines traditional herbal wisdom with cutting-edge AI technology
+
               to provide you with the most comprehensive natural health solution.
             </p>
           </motion.div>
@@ -230,7 +234,9 @@ const Home = () => {
                       <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="h-8 w-8 text-white" />
                       </div>
+
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gray-100 transition-colors duration-300">
+
                         {feature.title}
                       </h3>
                       <p className="text-white leading-relaxed">
@@ -256,18 +262,20 @@ const Home = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                 Why Choose HerbalMarket?
               </h2>
+
               <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-8 leading-relaxed">
                 We're committed to providing you with the highest quality herbal products
+
                 and AI-powered tools to support your natural wellness journey.
               </p>
               <div className="grid grid-cols-1 gap-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-primary-600 dark:text-primary-400 flex-shrink-0" />
-                    <span className="text-neutral-700 dark:text-neutral-200">{benefit}</span>
+                    <span className="text-white">{benefit}</span>
                   </div>
                 ))}
               </div>
@@ -285,23 +293,23 @@ const Home = () => {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <TrendingUp className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
-                    <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Growing Community</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Join thousands of wellness enthusiasts</p>
+                    <h3 className="font-bold text-white mb-2">Growing Community</h3>
+                    <p className="text-sm text-primary-200">Join thousands of wellness enthusiasts</p>
                   </div>
                   <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Award className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
-                    <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Quality Assured</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">All products verified and tested</p>
+                    <h3 className="font-bold text-white mb-2">Quality Assured</h3>
+                    <p className="text-sm text-primary-200">All products verified and tested</p>
                   </div>
                   <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Globe className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
-                    <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Global Reach</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Shipping to 50+ countries</p>
+                    <h3 className="font-bold text-white mb-2">Global Reach</h3>
+                    <p className="text-sm text-primary-200">Shipping to 50+ countries</p>
                   </div>
                   <div className="dark:bg-neutral-800 rounded-2xl p-6 shadow-lg" style={{ backgroundColor:'rgb(8, 167, 69)' }}>
                     <Shield className="h-12 w-12 text-primary-600 dark:text-primary-400 mb-4" />
-                    <h3 className="font-bold text-neutral-900 dark:text-white mb-2">Secure Platform</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Your data is safe with us</p>
+                    <h3 className="font-bold text-white mb-2">Secure Platform</h3>
+                    <p className="text-sm text-primary-200">Your data is safe with us</p>
                   </div>
                 </div>
               </div>
@@ -320,10 +328,10 @@ const Home = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               What Our Community Says
             </h2>
-            <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
+            <p className="text-xl text-white max-w-2xl mx-auto">
               Join thousands of satisfied customers who trust HerbalMarket for their natural wellness needs.
             </p>
           </motion.div>
@@ -343,7 +351,7 @@ const Home = () => {
                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-neutral-700 dark:text-neutral-200 mb-6 leading-relaxed">
+                <p className="text-white mb-6 leading-relaxed">
                   "{testimonial.content}"
                 </p>
                 <div className="flex items-center space-x-3">
@@ -355,8 +363,8 @@ const Home = () => {
                     )}
                   </div>
                   <div>
-                    <div className="font-semibold text-neutral-900 dark:text-white">{testimonial.name}</div>
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">{testimonial.role}</div>
+                    <div className="font-semibold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-primary-200">{testimonial.role}</div>
                   </div>
                 </div>
               </motion.div>
