@@ -1,9 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { getCurrentUser } from '../../services/userService';
 
 const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
+  const [hasResearchAccess, setHasResearchAccess] = useState(false);
 
 
   // Sticky on scroll
@@ -23,6 +25,17 @@ const Navbar = () => {
 
     updateCartCount();
 
+    // Determine research access (researcher role only) without changing visuals
+    (async () => {
+      try {
+        const u = await getCurrentUser();
+        const role = u?.profile?.user_type || u?.user_type;
+        setHasResearchAccess(role === 'researcher');
+      } catch (_) {
+        setHasResearchAccess(false);
+      }
+    })();
+
     window.addEventListener('storage', updateCartCount);
     window.addEventListener('cartUpdated', updateCartCount);
 
@@ -31,6 +44,8 @@ const Navbar = () => {
       window.removeEventListener('cartUpdated', updateCartCount);
     };
   }, []);
+
+  const researchTarget = hasResearchAccess ? '/research' : '/dashboard';
 
   return (
     <div style={{
@@ -146,7 +161,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/research" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                <NavLink to={researchTarget} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                   <i className="fas fa-flask me-1"></i> Research
                 </NavLink>
               </li>
