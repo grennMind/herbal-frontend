@@ -14,6 +14,13 @@ import SymptomChecker from './pages/SymptomChecker';
 import AIRecommendations from './pages/AIRecommendations';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Research from './pages/Research';
+import TopSearchBar from './components/Topbar/TopSearchBar';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
+import ResearchHub from './pages/ResearchHub';
+import Profile from './pages/user/Profile';
+import AdminDashboard from './pages/user/AdminDashboard';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   return (
