@@ -8,7 +8,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/user/Dashboard';
 import PlantScanner from './pages/PlantScanner';
 import SymptomChecker from './pages/SymptomChecker';
 import AIRecommendations from './pages/AIRecommendations';
@@ -22,6 +22,7 @@ import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/user/AdminDashboard';
 import NotFound from './pages/NotFound';
 import SupabaseHealth from './pages/health/SupabaseHealth';
+import Logout from './pages/Logout';
 
 const App = () => {
   return (
@@ -80,6 +81,7 @@ const App = () => {
                 </PrivateRoute>
               }
             />
+            <Route path="/logout" element={<Logout />} />
             <Route
               path="/profile"
               element={
