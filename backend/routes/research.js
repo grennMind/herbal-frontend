@@ -80,10 +80,14 @@ router.get("/", optionalAuth, async (req, res) => {
     const to = from + parseInt(limit) - 1;
 
     // Base select with count
-    let query = supabase
+    let query = supabaseAdmin
       .from("research_posts")
       .select("*", { count: "exact" })
       .range(from, to);
+
+    // Public listing should only include published posts by default
+    query = query.eq('status', 'published');
+    if (verified === "true") query = query.eq("is_verified", true);
 
     if (q) {
       // Use ilike on title for now; can be upgraded to full-text search via search_tsv
@@ -91,7 +95,6 @@ router.get("/", optionalAuth, async (req, res) => {
     }
     if (herbId) query = query.eq("related_herb_id", herbId);
     if (diseaseId) query = query.eq("related_disease_id", diseaseId);
-    if (verified === "true") query = query.eq("is_verified", true);
 
     // Sorting
     if (sortBy === "newest") {
@@ -111,12 +114,12 @@ router.get("/", optionalAuth, async (req, res) => {
     const ids = (data || []).map((p) => p.id);
     let postsWithAgg = data || [];
     if (ids.length) {
-      const { data: votesAgg } = await supabase
+      const { data: votesAgg } = await supabaseAdmin
         .from("research_votes")
         .select("post_id, value")
         .in("post_id", ids);
 
-      const { data: commentsAgg } = await supabase
+      const { data: commentsAgg } = await supabaseAdmin
         .from("comments")
         .select("post_id")
         .in("post_id", ids);

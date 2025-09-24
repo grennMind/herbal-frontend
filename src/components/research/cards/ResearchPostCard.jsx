@@ -3,18 +3,22 @@ import { motion } from "framer-motion";
 import { MessageSquare, ArrowBigUp } from "lucide-react";
 
 const ResearchPostCard = ({ post, onClick }) => {
+  const abstract = post.abstract || "";
+  const content = post.content || "";
+  const isLong = (abstract?.length || 0) > 220 || (content?.length || 0) > 400;
+
   return (
     <motion.div
       layout
       whileHover={{ scale: 1.02 }}
-      className="p-6 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer"
+      className="p-6 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer flex flex-col h-64"
       onClick={onClick}
     >
       {/* Header */}
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{post.title}</h2>
+      <div className="flex justify-between items-center mb-1">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1">{post.title}</h2>
         <span
-          className={`px-2 py-1 text-sm rounded-full font-semibold ${
+          className={`px-2 py-1 text-xs rounded-full font-semibold ${
             (post.status || '').toLowerCase() === "published"
               ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
               : (post.status || '').toLowerCase() === "draft"
@@ -27,18 +31,18 @@ const ResearchPostCard = ({ post, onClick }) => {
       </div>
 
       {/* Author & Date */}
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
         {new Date(post.created_at || post.createdAt || Date.now()).toLocaleDateString()}
       </p>
 
       {/* Abstract */}
-      <p className="text-gray-700 dark:text-gray-300 mb-3 line-clamp-3">
-        {post.abstract}
-      </p>
+      <div className="text-gray-700 dark:text-gray-300 text-sm line-clamp-3 mb-2">
+        {abstract || (content ? content.slice(0, 160) : "")}
+      </div>
 
       {/* Herbs and Diseases */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        {post.herbs?.map((h) => (
+      <div className="flex flex-wrap gap-2 mb-2 overflow-hidden">
+        {post.herbs?.slice(0, 3).map((h) => (
           <span
             key={h.id || h}
             className="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs font-medium"
@@ -46,7 +50,7 @@ const ResearchPostCard = ({ post, onClick }) => {
             {h.name || h}
           </span>
         ))}
-        {post.diseases?.map((d) => (
+        {post.diseases?.slice(0, 3).map((d) => (
           <span
             key={d.id || d}
             className="px-2 py-1 bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 rounded-full text-xs font-medium"
@@ -56,16 +60,28 @@ const ResearchPostCard = ({ post, onClick }) => {
         ))}
       </div>
 
-      {/* Votes and Comments */}
-      <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
-        <div className="flex items-center gap-1">
-          <ArrowBigUp className="w-4 h-4 text-blue-500" />
-          <span>{post.votes_count ?? 0}</span>
+      {/* Footer */}
+      <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center gap-1">
+            <ArrowBigUp className="w-4 h-4 text-blue-500" />
+            <span>{post.votes_count ?? 0}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MessageSquare className="w-4 h-4 text-gray-400" />
+            <span>{post.comments_count ?? 0}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <MessageSquare className="w-4 h-4 text-gray-400" />
-          <span>{post.comments_count ?? 0}</span>
-        </div>
+
+        {isLong && (
+          <button
+            className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
+            onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+            aria-label="View more"
+          >
+            View more
+          </button>
+        )}
       </div>
     </motion.div>
   );

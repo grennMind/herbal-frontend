@@ -13,7 +13,22 @@ export const fetchResearchPosts = async (params = {}) => {
       },
     });
 
-    const data = await res.json();
+    if (!res.ok) {
+      // Try to read error JSON, otherwise throw status text
+      try {
+        const errJson = await res.json();
+        throw new Error(errJson?.message || `Failed to fetch posts (${res.status})`);
+      } catch {
+        throw new Error(`Failed to fetch posts (${res.status})`);
+      }
+    }
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Invalid server response");
+    }
     if (!data.success) throw new Error(data.message || "Failed to fetch posts");
     return data.data;
   } catch (err) {

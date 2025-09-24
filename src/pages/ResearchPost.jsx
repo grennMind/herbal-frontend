@@ -151,17 +151,17 @@ const ResearchPost = () => {
   };
 
   if (loading) {
-    return <div className="container pt-32 text-neutral-300">Loading...</div>;
+    return <div className="pt-32 text-neutral-300 w-full lg:w-[70%] mx-auto px-4">Loading...</div>;
   }
   if (!post) {
-    return <div className="container pt-32 text-neutral-300">Post not found.</div>;
+    return <div className="pt-32 text-neutral-300 w-full lg:w-[70%] mx-auto px-4">Post not found.</div>;
   }
 
   return (
-    <div className="container pt-28 pb-16">
-      <div className="grid lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
-          <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+    <div className="pt-28 pb-16">
+      <div className="w-full lg:w-[70%] mx-auto px-4 lg:px-0">
+        {/* Main Post Card */}
+        <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
             <div className="flex items-start justify-between">
               <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">{post.title}</h1>
               <div className="flex items-center gap-2">
@@ -211,10 +211,22 @@ const ResearchPost = () => {
                 </button>
               )}
             </div>
-          </div>
+        </div>
 
-          {/* Comments */}
-          <div className="mt-8 p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+        {/* Metadata (stacked under the post on all screens) */}
+        <div className="mt-6 p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+          <div className="text-sm text-neutral-400">Metadata</div>
+          <div className="mt-2 text-sm text-neutral-300 space-y-1">
+            <div>Status: {post.status}</div>
+            {post.related_herb_id && <div>Herb: {post.related_herb_id}</div>}
+            {post.related_disease_id && <div>Disease: {post.related_disease_id}</div>}
+            <div>Verified: {post.is_verified ? 'Yes' : 'No'}</div>
+            <div>Created: {new Date(post.created_at || Date.now()).toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Comments */}
+        <div className="mt-8 p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
             <h2 className="text-lg font-bold text-white mb-4">Comments</h2>
             <form onSubmit={submitRootComment} className="mb-4">
               <textarea
@@ -240,21 +252,7 @@ const ResearchPost = () => {
             </div>
           </div>
         </div>
-        <div className="lg:col-span-1">
-          {/* Sidebar for tags/herb/disease */}
-          <div className="p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
-            <div className="text-sm text-neutral-400">Metadata</div>
-            <div className="mt-2 text-sm text-neutral-300 space-y-1">
-              <div>Status: {post.status}</div>
-              {post.related_herb_id && <div>Herb: {post.related_herb_id}</div>}
-              {post.related_disease_id && <div>Disease: {post.related_disease_id}</div>}
-              <div>Verified: {post.is_verified ? 'Yes' : 'No'}</div>
-              <div>Created: {new Date(post.created_at || Date.now()).toLocaleString()}</div>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
   );
 };
 
