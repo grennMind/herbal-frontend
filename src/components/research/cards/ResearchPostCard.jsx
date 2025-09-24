@@ -5,15 +5,30 @@ import { MessageSquare, ArrowBigUp } from "lucide-react";
 const ResearchPostCard = ({ post, onClick }) => {
   const abstract = post.abstract || "";
   const content = post.content || "";
+  // Pick the first image from attachments as thumbnail, fallback to first <img> in content
+  const attachments = Array.isArray(post.attachments) ? post.attachments : [];
+  const attachImg = attachments.find(a => a && a.url && String(a.mimetype || "").startsWith("image/"));
+  let contentImg = null;
+  if (!attachImg && typeof content === 'string') {
+    const m = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+    contentImg = m ? m[1] : null;
+  }
+  const thumbUrl = attachImg?.url || contentImg || null;
   const isLong = (abstract?.length || 0) > 220 || (content?.length || 0) > 400;
 
   return (
     <motion.div
       layout
       whileHover={{ scale: 1.02 }}
-      className="p-6 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer flex flex-col h-64"
+      className="p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer flex flex-col h-72"
       onClick={onClick}
     >
+      {/* Thumbnail */}
+      {thumbUrl && (
+        <div className="mb-2 -mt-1">
+          <img src={thumbUrl} alt="thumbnail" className="w-full h-24 object-cover rounded-lg" />
+        </div>
+      )}
       {/* Header */}
       <div className="flex justify-between items-center mb-1">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1">{post.title}</h2>

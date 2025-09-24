@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
+import DOMPurify from "dompurify";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowBigUp, ArrowBigDown, Bookmark, Share2 } from "lucide-react";
@@ -69,6 +70,9 @@ const ResearchPost = () => {
   const [saving, setSaving] = useState(false);
   const [voting, setVoting] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showRaw, setShowRaw] = useState(false);
+  const [lightbox, setLightbox] = useState({ open: false, src: "", alt: "" });
+  const contentRef = useRef(null);
 
   const load = async () => {
     setLoading(true);
@@ -91,6 +95,20 @@ const ResearchPost = () => {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Make images inside content clickable for lightbox
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container) return;
+    const handler = (e) => {
+      const t = e.target;
+      if (t && t.tagName === 'IMG' && t.src) {
+        setLightbox({ open: true, src: t.src, alt: t.alt || 'image' });
+      }
+    };
+    container.addEventListener('click', handler);
+    return () => container.removeEventListener('click', handler);
+  }, [post]);
 
   const votesCount = useMemo(() => post?.votes_count ?? 0, [post]);
 
@@ -185,9 +203,42 @@ const ResearchPost = () => {
             {post.abstract && (
               <p className="mt-2 text-neutral-600 dark:text-neutral-300">{post.abstract}</p>
             )}
-            <div className="prose prose-neutral dark:prose-invert max-w-none mt-6 whitespace-pre-wrap">
-              {post.content}
+            <div className="mt-3 flex gap-2">
+              <button className="px-2 py-1 text-xs rounded-md border border-neutral-700 text-neutral-300 hover:bg-neutral-800" onClick={() => setShowRaw(v => !v)}>
+                {showRaw ? 'Hide HTML' : 'View HTML'}
+              </button>
             </div>
+            <div
+              ref={contentRef}
+              className="prose prose-neutral dark:prose-invert max-w-none mt-6"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post?.content || "", { USE_PROFILES: { html: true } }) }}
+            />
+
+            {showRaw && (
+              <pre className="mt-4 p-3 rounded-lg bg-neutral-900 text-neutral-100 overflow-auto text-xs border border-neutral-800 whitespace-pre-wrap break-words">{post?.content || ''}</pre>
+            )}
+
+            {/* Attachments (if any and not already embedded in content) */}
+            {Array.isArray(post.attachments) && post.attachments.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-neutral-500">Attachments</h3>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {post.attachments.map((a, idx) => (
+                    <div key={idx} className="p-1 border rounded-md dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/40">
+                      {String(a.mimetype || "").startsWith("image/") && a.url ? (
+                        <a href={a.url} target="_blank" rel="noreferrer" title={a.filename || "image"}>
+                          <img src={a.url} alt={a.filename || "attachment"} className="h-12 w-16 object-cover rounded" />
+                        </a>
+                      ) : (
+                        <a href={a.url || '#'} target={a.url ? "_blank" : undefined} rel={a.url ? "noreferrer" : undefined} className="text-xs text-blue-600 max-w-[10rem] block truncate" title={a.filename || a.key || "Attachment"}>
+                          {a.filename || a.key || "Attachment"}
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {(post.references_list?.length > 0) && (
               <div className="mt-6">
                 <h3 className="text-sm font-semibold text-neutral-500">References</h3>
@@ -252,6 +303,12 @@ const ResearchPost = () => {
             </div>
           </div>
         </div>
+        {/* Lightbox Modal */}
+        {lightbox.open && (
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setLightbox({ open: false, src: "", alt: "" })}>
+            <img src={lightbox.src} alt={lightbox.alt} className="max-h-[90vh] max-w-[90vw] rounded shadow-2xl" />
+          </div>
+        )}
       </div>
   );
 };
