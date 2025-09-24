@@ -398,32 +398,79 @@ router.post("/:id/save", authenticate, async (req, res) => {
 // ----------------------
 router.delete("/:id", authenticate, async (req, res) => {
   try {
-    // Fetch post author
-    const { data: post, error } = await supabase
+    // Fetch post author using admin client (bypass RLS after our app-level auth)
+    const { data: post, error } = await supabaseAdmin
       .from("research_posts")
       .select("author_id")
+      .eq("id", req.params.id)
+      .single();
+    if (error) throw error;
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
+
+    const isOwner = post.author_id === req.user.id;
+    const isAdmin = req.user.userType === "admin";
+    // Allow the post author OR an admin to delete. This avoids role mismatches blocking authors.
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Only the author or an admin can delete this post" });
+    }
+
+    // Clean up dependents first to avoid FK/RLS surprises (votes, saves, comments), then the post
+    const postId = req.params.id;
+    const tasks = [];
+    tasks.push(
+      supabaseAdmin.from("research_votes").delete().eq("post_id", postId)
+    );
+    tasks.push(
+      supabaseAdmin.from("research_saves").delete().eq("post_id", postId)
+    );
+    tasks.push(
+      supabaseAdmin.from("comments").delete().eq("post_id", postId)
+    );
+    await Promise.allSettled(tasks);
+
+    const { error: delErr } = await supabaseAdmin
+      .from("research_posts")
+      .delete()
+      .eq("id", postId);
+    if (delErr) throw delErr;
+
+    res.json({ success: true, message: "Post deleted" });
+  } catch (err) {
+    console.error("Delete research post error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// ----------------------
+// MAINTENANCE: One-time force delete (no user session)
+// PROTECT with MAINTENANCE_KEY header. Only use locally, then remove.
+// ----------------------
+router.delete("/force/:id", async (req, res) => {
+  try {
+    const configuredKey = process.env.MAINTENANCE_KEY;
+    const providedKey = req.header('x-maintenance-key');
+    if (!configuredKey || configuredKey !== providedKey) {
+      return res.status(401).json({ success: false, message: "Unauthorized maintenance access" });
+    }
+
+    const { data: post, error } = await supabase
+      .from("research_posts")
+      .select("id")
       .eq("id", req.params.id)
       .single();
 
     if (error) throw error;
     if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
-    const isOwner = post.author_id === req.user.id;
-    const isResearcher = req.user.userType === "researcher";
-    if (!isOwner || !isResearcher) {
-      return res.status(403).json({ success: false, message: "Only the researcher author can delete this post" });
-    }
-
     const { error: delErr } = await supabase
       .from("research_posts")
       .delete()
       .eq("id", req.params.id);
-
     if (delErr) throw delErr;
 
-    res.json({ success: true, message: "Post deleted" });
+    return res.json({ success: true, message: "Post force-deleted" });
   } catch (err) {
-    console.error("Delete research post error:", err);
+    console.error("Force delete research post error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });

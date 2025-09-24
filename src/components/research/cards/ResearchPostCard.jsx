@@ -1,5 +1,6 @@
 // File: src/components/research/cards/ResearchPostCard.jsx
 import { motion } from "framer-motion";
+import { proxiedImage } from "../../../utils/proxy";
 import { MessageSquare, ArrowBigUp } from "lucide-react";
 
 const ResearchPostCard = ({ post, onClick }) => {
