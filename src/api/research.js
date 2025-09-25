@@ -1,3 +1,4 @@
+// src/api/research.js
 import { supabase } from "../config/supabase";
 import { ensureAppJwt } from "../services/authService";
 
@@ -92,7 +93,6 @@ export const createResearchPost = async (newPost) => {
       headers,
       body: JSON.stringify(newPost),
     });
-
     if (res.status === 401 || res.status === 403) {
       await ensureAppJwt().catch(() => {});
       token = localStorage.getItem("token");
@@ -138,7 +138,7 @@ export const createResearchPost = async (newPost) => {
   }
 };
 
-// Post a comment
+// Post a comment on a research post
 export const postComment = async (postId, content, parentId = null) => {
   try {
     await ensureAppJwt().catch(() => {});
@@ -147,7 +147,10 @@ export const postComment = async (postId, content, parentId = null) => {
 
     let res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ content, parentId }),
     });
 
@@ -156,7 +159,10 @@ export const postComment = async (postId, content, parentId = null) => {
       token = localStorage.getItem("token");
       res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ content, parentId }),
       });
     }
@@ -175,7 +181,10 @@ export const fetchComments = async (postId) => {
   try {
     const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
-      headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     });
 
     const data = await res.json();
@@ -187,14 +196,17 @@ export const fetchComments = async (postId) => {
   }
 };
 
-// Voting
+// Voting and saving
 export const voteOnPost = async (postId, value) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("User must be logged in to vote");
     const res = await fetch(`/api/research/${postId}/votes`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ value }),
     });
     const data = await res.json();
@@ -205,14 +217,17 @@ export const voteOnPost = async (postId, value) => {
   }
 };
 
-// Update a comment
+// Update a comment (author or admin)
 export const updateComment = async (postId, commentId, content) => {
   try {
     await ensureAppJwt().catch(() => {});
     const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE}/api/research/${postId}/comments/${commentId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
       body: JSON.stringify({ content }),
     });
     const data = await res.json();
@@ -223,14 +238,17 @@ export const updateComment = async (postId, commentId, content) => {
   }
 };
 
-// Delete a comment
+// Delete a comment (author or admin)
 export const deleteComment = async (postId, commentId) => {
   try {
     await ensureAppJwt().catch(() => {});
     const token = localStorage.getItem("token");
     const res = await fetch(`/api/research/${postId}/comments/${commentId}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     });
     const data = await res.json();
     return !!data?.success;
@@ -240,13 +258,16 @@ export const deleteComment = async (postId, commentId) => {
   }
 };
 
-// Delete a research post
+// Delete a research post (author must be a researcher)
 export const deleteResearchPost = async (postId) => {
   try {
     let token = localStorage.getItem("token");
     let res = await fetch(`${API_BASE}/api/research/${postId}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     });
 
     if (res.status === 401 || res.status === 403) {
@@ -254,7 +275,10 @@ export const deleteResearchPost = async (postId) => {
       token = localStorage.getItem("token");
       res = await fetch(`${API_BASE}/api/research/${postId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       });
     }
 
@@ -267,7 +291,8 @@ export const deleteResearchPost = async (postId) => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth?.user) throw new Error("No Supabase session");
 
-      const { error } = await supabase.from("research_posts")
+      const { error } = await supabase
+        .from("research_posts")
         .delete()
         .eq("id", postId)
         .eq("author_id", auth.user.id);
@@ -283,14 +308,17 @@ export const deleteResearchPost = async (postId) => {
   }
 };
 
-// Save a research post
+// Save a research post (author must be a researcher)
 export const savePost = async (postId, action) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("User must be logged in to save");
     const res = await fetch(`${API_BASE}/api/research/${postId}/save`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ action }),
     });
     const data = await res.json();
@@ -299,18 +327,4 @@ export const savePost = async (postId, action) => {
     console.error(err);
     return false;
   }
-};
-
-// ✅ Export all functions for Vercel build
-export {
-  fetchResearchPosts,
-  fetchResearchPost,
-  createResearchPost,
-  postComment,
-  fetchComments,
-  voteOnPost,
-  updateComment,
-  deleteComment,
-  deleteResearchPost,
-  savePost
 };
