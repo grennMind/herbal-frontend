@@ -17,6 +17,51 @@ router.post("/", async (req, res) => {
     const raw = req.header('Authorization');
     const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
     if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+
+// ----------------------
+// Get comments only (threaded)
+// ----------------------
+router.get("/:id/comments", optionalAuth, async (req, res) => {
+  try {
+    // Ensure post exists (optional, but nice)
+    const { data: post, error: postErr } = await supabase
+      .from("research_posts")
+      .select("id, status, author_id")
+      .eq("id", req.params.id)
+      .single();
+    if (postErr) throw postErr;
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
+
+    // Fetch comments ordered by created_at and build thread
+    const { data: comments, error: commentError } = await supabase
+      .from("comments")
+      .select("*")
+      .or(
+        `post_id.eq.${req.params.id},and(post_id.is.null,entity_type.eq.research_post,entity_id.eq.${req.params.id})`
+      )
+      .order("created_at", { ascending: true });
+    if (commentError) throw commentError;
+
+    const byId = new Map();
+    (comments || []).forEach((c) => byId.set(c.id, { ...c, replies: [] }));
+    const roots = [];
+    (comments || []).forEach((c) => {
+      const node = byId.get(c.id);
+      if (c.parent_id) {
+        const parent = byId.get(c.parent_id);
+        if (parent) parent.replies.push(node);
+        else roots.push(node);
+      } else {
+        roots.push(node);
+      }
+    });
+
+    return res.json({ success: true, data: { comments: roots } });
+  } catch (err) {
+    console.error("List comments error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -202,7 +247,8 @@ router.get("/:id", optionalAuth, async (req, res) => {
     const { data: comments, error: commentError } = await supabase
       .from("comments")
       .select("*")
-      .eq("post_id", req.params.id);
+      .or(`post_id.eq.${req.params.id},and(post_id.is.null,entity_type.eq.research_post,entity_id.eq.${req.params.id})`)
+      .order("created_at", { ascending: true });
 
     if (commentError) console.warn("Comments fetch warning:", commentError.message);
 
@@ -321,18 +367,50 @@ router.put("/:id", authenticate, async (req, res) => {
 // ----------------------
 // Add comment or reply
 // ----------------------
-router.post("/:id/comments", authenticate, async (req, res) => {
+router.post("/:id/comments", async (req, res) => {
   try {
+    // Decode backend app JWT
+    const raw = req.header('Authorization');
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
+    if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+    let decoded;
+    try { decoded = jwt.verify(token, process.env.JWT_SECRET); } catch {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = { id: decoded.id, userType: decoded.userType };
     const { content, parentId } = req.body;
     if (!content)
       return res.status(400).json({ success: false, message: "Content is required" });
 
-    const { data: comment, error } = await supabase
+    // Normalize parentId: require non-empty UUID string; otherwise treat as null (root)
+    let parentIdNorm = null;
+    if (typeof parentId === 'string' && parentId.trim().length > 0) {
+      parentIdNorm = parentId.trim();
+      // Verify parent exists and is on the same post
+      try {
+        const { data: parent, error: pErr } = await supabaseAdmin
+          .from("comments")
+          .select("id, post_id, entity_type, entity_id")
+          .eq("id", parentIdNorm)
+          .single();
+        const samePost = parent && (
+          String(parent.post_id) === String(req.params.id) ||
+          (parent.post_id === null && parent.entity_type === 'research_post' && String(parent.entity_id) === String(req.params.id))
+        );
+        if (pErr || !parent || !samePost) {
+          parentIdNorm = null; // fallback to root if invalid
+        }
+      } catch {
+        parentIdNorm = null;
+      }
+    }
+
+    const { data: comment, error } = await supabaseAdmin
       .from("comments")
       .insert([
         {
           content,
-          parent_id: parentId || null,
+          parent_id: parentIdNorm,
           post_id: req.params.id,
           author_id: req.user.id,
           entity_type: "research_post",
@@ -347,6 +425,97 @@ router.post("/:id/comments", authenticate, async (req, res) => {
     res.status(201).json({ success: true, data: { comment } });
   } catch (err) {
     console.error("Create comment error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// ----------------------
+// Update a comment (author or admin)
+// ----------------------
+router.put("/:postId/comments/:commentId", async (req, res) => {
+  try {
+    // Decode backend app JWT
+    const raw = req.header('Authorization');
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
+    if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+    let decoded;
+    try { decoded = jwt.verify(token, process.env.JWT_SECRET); } catch {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = { id: decoded.id, userType: decoded.userType };
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ success: false, message: "Content is required" });
+
+    // Check ownership
+    const { data: existing, error: fetchErr } = await supabaseAdmin
+      .from("comments")
+      .select("author_id, post_id")
+      .eq("id", req.params.commentId)
+      .single();
+    if (fetchErr) throw fetchErr;
+    if (!existing || existing.post_id !== req.params.postId)
+      return res.status(404).json({ success: false, message: "Comment not found" });
+
+    const isOwner = existing.author_id === req.user.id;
+    const isAdmin = req.user.userType === "admin";
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    const { data: updated, error } = await supabaseAdmin
+      .from("comments")
+      .update({ content })
+      .eq("id", req.params.commentId)
+      .select("*")
+      .single();
+    if (error) throw error;
+
+    res.json({ success: true, data: { comment: updated } });
+  } catch (err) {
+    console.error("Update comment error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// ----------------------
+// Delete a comment (author or admin)
+// ----------------------
+router.delete("/:postId/comments/:commentId", async (req, res) => {
+  try {
+    // Decode backend app JWT
+    const raw = req.header('Authorization');
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
+    if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+    let decoded;
+    try { decoded = jwt.verify(token, process.env.JWT_SECRET); } catch {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = { id: decoded.id, userType: decoded.userType };
+    // Check ownership
+    const { data: existing, error: fetchErr } = await supabase
+      .from("comments")
+      .select("author_id, post_id")
+      .eq("id", req.params.commentId)
+      .single();
+    if (fetchErr) throw fetchErr;
+    if (!existing || existing.post_id !== req.params.postId)
+      return res.status(404).json({ success: false, message: "Comment not found" });
+
+    const isOwner = existing.author_id === req.user.id;
+    const isAdmin = req.user.userType === "admin";
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    const { error } = await supabaseAdmin
+      .from("comments")
+      .delete()
+      .eq("id", req.params.commentId);
+    if (error) throw error;
+
+    res.json({ success: true, message: "Comment deleted" });
+  } catch (err) {
+    console.error("Delete comment error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });

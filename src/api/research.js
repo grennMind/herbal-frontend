@@ -124,10 +124,11 @@ export const createResearchPost = async (newPost) => {
 // Post a comment on a research post
 export const postComment = async (postId, content, parentId = null) => {
   try {
-    const token = localStorage.getItem("token");
+    await ensureAppJwt().catch(() => {});
+    let token = localStorage.getItem("token");
     if (!token) throw new Error("User must be logged in to post a comment");
 
-    const res = await fetch(`/api/research/${postId}/comments`, {
+    let res = await fetch(`/api/research/${postId}/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -135,6 +136,19 @@ export const postComment = async (postId, content, parentId = null) => {
       },
       body: JSON.stringify({ content, parentId }),
     });
+
+    if (res.status === 401 || res.status === 403) {
+      await ensureAppJwt().catch(() => {});
+      token = localStorage.getItem("token");
+      res = await fetch(`/api/research/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content, parentId }),
+      });
+    }
 
     const data = await res.json();
     if (!data.success) throw new Error(data.message || "Failed to post comment");
@@ -180,6 +194,47 @@ export const voteOnPost = async (postId, value) => {
     });
     const data = await res.json();
     return data.success;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+// Update a comment (author or admin)
+export const updateComment = async (postId, commentId, content) => {
+  try {
+    await ensureAppJwt().catch(() => {});
+    const token = localStorage.getItem("token");
+    const res = await fetch(`/api/research/${postId}/comments/${commentId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({ content }),
+    });
+    const data = await res.json();
+    return !!data?.success;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+// Delete a comment (author or admin)
+export const deleteComment = async (postId, commentId) => {
+  try {
+    await ensureAppJwt().catch(() => {});
+    const token = localStorage.getItem("token");
+    const res = await fetch(`/api/research/${postId}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+    const data = await res.json();
+    return !!data?.success;
   } catch (err) {
     console.error(err);
     return false;

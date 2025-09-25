@@ -5,12 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { ArrowBigUp, ArrowBigDown, Bookmark, Share2 } from "lucide-react";
 import { proxiedImage } from "../utils/proxy";
-import { fetchResearchPost, postComment, voteOnPost, savePost, deleteResearchPost } from "../api/research";
+import { fetchResearchPost, postComment, voteOnPost, savePost, deleteResearchPost, updateComment, deleteComment } from "../api/research";
 import { getCurrentUser } from "../services/userService";
 
-const CommentNode = ({ node, onReply }) => {
+const CommentNode = ({ node, onReply, currentUser, postId, onChanged }) => {
   const [openReply, setOpenReply] = useState(false);
   const [replyText, setReplyText] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(node.content || "");
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,12 +22,58 @@ const CommentNode = ({ node, onReply }) => {
     setOpenReply(false);
   };
 
+  const role = currentUser?.profile?.user_type || currentUser?.user_type;
+  const canManage = !!currentUser && ((node.author_id && currentUser.id === node.author_id) || role === 'admin');
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editText.trim()) return;
+    const ok = await updateComment(postId, node.id, editText.trim());
+    if (ok) {
+      setEditing(false);
+      onChanged?.();
+    }
+  };
+
+  const handleDelete = async () => {
+    const ok = window.confirm("Delete this comment?");
+    if (!ok) return;
+    const success = await deleteComment(postId, node.id);
+    if (success) onChanged?.();
+  };
+
   return (
     <div className="mt-4">
       <div className="p-3 rounded-lg bg-neutral-900/40 border border-neutral-800">
-        <div className="text-sm text-neutral-300 whitespace-pre-wrap">{node.content}</div>
-        <div className="flex gap-3 mt-2 text-xs text-neutral-500">
+        {!editing ? (
+          <div className="text-sm text-neutral-300 whitespace-pre-wrap">{node.content}</div>
+        ) : (
+          <form onSubmit={handleSaveEdit} className="space-y-2">
+            <textarea
+              className="w-full p-2 rounded-md bg-neutral-900 border border-neutral-800 text-white"
+              rows={3}
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <button type="submit" className="px-3 py-1 rounded-md bg-blue-600 text-white">Save</button>
+              <button type="button" className="px-3 py-1 rounded-md bg-neutral-800 text-neutral-200" onClick={() => { setEditing(false); setEditText(node.content || ""); }}>Cancel</button>
+            </div>
+          </form>
+        )}
+        <div className="flex gap-3 mt-2 text-xs text-neutral-500 items-center">
           <button className="hover:text-white" onClick={() => setOpenReply((v) => !v)}>Reply</button>
+          {Array.isArray(node.replies) && node.replies.length > 0 && (
+            <button className="hover:text-white" onClick={() => setCollapsed((v) => !v)}>
+              {collapsed ? `Expand (${node.replies.length})` : "Collapse"}
+            </button>
+          )}
+          {canManage && !editing && (
+            <>
+              <button className="hover:text-white" onClick={() => setEditing(true)}>Edit</button>
+              <button className="hover:text-red-400 text-red-300" onClick={handleDelete}>Delete</button>
+            </>
+          )}
         </div>
         <AnimatePresence>
           {openReply && (
@@ -50,10 +99,10 @@ const CommentNode = ({ node, onReply }) => {
           )}
         </AnimatePresence>
       </div>
-      {node.replies?.length > 0 && (
+      {node.replies?.length > 0 && !collapsed && (
         <div className="ml-6 border-l border-neutral-800 pl-4">
           {node.replies.map((child) => (
-            <CommentNode key={child.id} node={child} onReply={onReply} />
+            <CommentNode key={child.id} node={child} onReply={onReply} currentUser={currentUser} postId={postId} onChanged={onChanged} />
           ))}
         </div>
       )}
@@ -371,7 +420,14 @@ export default function ResearchPost() {
           <div>
             {comments?.length ? (
               comments.map((c) => (
-                <CommentNode key={c.id} node={c} onReply={handleAddComment} />
+                <CommentNode
+                  key={c.id}
+                  node={c}
+                  onReply={handleAddComment}
+                  currentUser={currentUser}
+                  postId={id}
+                  onChanged={load}
+                />
               ))
             ) : (
               <div className="text-neutral-400 text-sm">No comments yet.</div>
