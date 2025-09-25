@@ -201,7 +201,9 @@ export default function ResearchPost() {
   const canDelete = useMemo(() => {
     if (!currentUser || !post) return false;
     const role = currentUser.profile?.user_type || currentUser.user_type;
-    return role === 'researcher' && post.author_id === currentUser.id;
+    const isOwner = post.author_id === currentUser.id;
+    const isAdmin = role === 'admin';
+    return isOwner || isAdmin;
   }, [currentUser, post]);
 
   const handleDelete = async () => {

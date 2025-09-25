@@ -1,7 +1,8 @@
 // routes/research.js
 import express from "express";
-import { authenticate, optionalAuth } from "../middleware/auth.js";
 import supabase, { supabaseAdmin } from "../config/supabase.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
+import jwt from "jsonwebtoken";
 import { normalizeStructured } from "../services/structuring.js";
 
 const router = express.Router();
@@ -9,9 +10,21 @@ const router = express.Router();
 // ----------------------
 // Create a research post
 // ----------------------
-// Use optionalAuth and service role to avoid client-side RLS recursion issues during create
-router.post("/", optionalAuth, async (req, res) => {
+// Require authentication (decode app JWT here) and allow only researcher/herbalist/admin to create
+router.post("/", async (req, res) => {
   try {
+    // Decode backend app JWT (issued by /api/auth/supabase-exchange)
+    const raw = req.header('Authorization');
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
+    if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = { id: decoded.id, userType: decoded.userType };
+
     const {
       title,
       abstract,
@@ -20,7 +33,6 @@ router.post("/", optionalAuth, async (req, res) => {
       attachments,
       relatedHerbId,
       relatedDiseaseId,
-      authorId,
     } = req.body;
 
     if (!title || !content) {
@@ -30,9 +42,15 @@ router.post("/", optionalAuth, async (req, res) => {
       });
     }
 
-    // Align with Supabase snake_case columns per 02_extended_research.sql
-    // Prefer authenticated user id; fallback to provided authorId
-    const author_id = req.user?.id || authorId || null;
+    // Role check: only researcher, herbalist, or admin can create
+    const role = req.user?.userType;
+    const allowed = role === 'researcher' || role === 'herbalist' || role === 'admin';
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: "Only researchers, herbalists, or admins can create research posts" });
+    }
+
+    // Always set author to the authenticated user
+    const author_id = req.user.id;
 
     const { data, error } = await supabaseAdmin
       .from("research_posts")
@@ -396,8 +414,18 @@ router.post("/:id/save", authenticate, async (req, res) => {
 // ----------------------
 // Delete a post (author must be a researcher)
 // ----------------------
-router.delete("/:id", authenticate, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
+    // Decode backend app JWT
+    const raw = req.header('Authorization');
+    const token = raw?.startsWith('Bearer ') ? raw.slice(7) : null;
+    if (!token) return res.status(401).json({ success: false, message: 'Missing token' });
+    let decoded;
+    try { decoded = jwt.verify(token, process.env.JWT_SECRET); } catch {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = { id: decoded.id, userType: decoded.userType };
+
     // Fetch post author using admin client (bypass RLS after our app-level auth)
     const { data: post, error } = await supabaseAdmin
       .from("research_posts")

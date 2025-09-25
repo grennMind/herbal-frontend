@@ -163,13 +163,11 @@ const Navbar = () => {
                   <i className="fas fa-robot me-1"></i> AI Recommendations
                 </NavLink>
               </li>
-              {hasResearchAccess && (
-                <li className="nav-item">
-                  <NavLink to={researchHubPath} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                    <i className="fas fa-flask me-1"></i> Research Hub
-                  </NavLink>
-                </li>
-              )}
+              <li className="nav-item">
+                <NavLink to={researchHubPath} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  <i className="fas fa-flask me-1"></i> Research Hub
+                </NavLink>
+              </li>
 
               {user && (
                 <li className="nav-item">

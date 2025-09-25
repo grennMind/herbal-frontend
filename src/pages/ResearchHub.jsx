@@ -7,6 +7,7 @@ import ResearchFilters from "../components/research/filters/ResearchFilters";
 import ResearchPostCard from "../components/research/cards/ResearchPostCard";
 import { Plus } from "lucide-react";
 import { supabase } from "../config/supabase";
+import { getCurrentUser } from "../services/userService";
 
 const ResearchHub = () => {
   const [posts, setPosts] = useState([]);
@@ -19,6 +20,7 @@ const ResearchHub = () => {
   const [filterValues, setFilterValues] = useState({ herbs: [], diseases: [], status: [] });
   const [sortBy, setSortBy] = useState("newest");
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Fetch posts from API with sorting and simple filters
   const loadPosts = async (page = 1) => {
@@ -46,6 +48,18 @@ const ResearchHub = () => {
   useEffect(() => {
     loadPosts(1);
   }, [filterValues, sortBy]);
+
+  // Load current user (if any) for role-based UI controls
+  useEffect(() => {
+    (async () => {
+      try {
+        const u = await getCurrentUser();
+        setCurrentUser(u);
+      } catch {
+        setCurrentUser(null);
+      }
+    })();
+  }, []);
 
   // Load herbs/diseases for Filters
   useEffect(() => {
@@ -100,12 +114,18 @@ const ResearchHub = () => {
           >
             Filters
           </button>
-          <button
-            onClick={() => navigate('/research/new')}
-            className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all shadow-md"
-          >
-            <Plus className="w-4 h-4" /> Add New Research
-          </button>
+          {(() => {
+            const role = currentUser?.profile?.user_type || currentUser?.user_type;
+            const canPost = role === 'researcher' || role === 'herbalist';
+            return canPost ? (
+              <button
+                onClick={() => navigate('/research/new')}
+                className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all shadow-md"
+              >
+                <Plus className="w-4 h-4" /> Add New Research
+              </button>
+            ) : null;
+          })()}
         </div>
       </div>
 

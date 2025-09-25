@@ -56,21 +56,14 @@ const App = () => {
             <Route
               path="/research/new"
               element={
-                <PrivateRoute roles={['researcher']}>
+                <PrivateRoute roles={['researcher','herbalist']}>
                   <ResearchNew />
                 </PrivateRoute>
               }
             />
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route
-              path="/research-hub"
-              element={
-                <PrivateRoute roles={['researcher','herbalist']}>
-                  <ResearchHub />
-                </PrivateRoute>
-              }
-            />
+            <Route path="/research-hub" element={<ResearchHub />} />
 
             {/* Authentication */}
             <Route

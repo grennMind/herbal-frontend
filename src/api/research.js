@@ -63,15 +63,30 @@ export const createResearchPost = async (newPost) => {
       }
     } catch {}
 
-    const token = localStorage.getItem("token");
-    const headers = token
+    // Ensure app JWT is present
+    await ensureAppJwt().catch(() => {});
+    let token = localStorage.getItem("token");
+    let headers = token
       ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
       : { "Content-Type": "application/json" };
-    const res = await fetch("/api/research", {
+    let res = await fetch("/api/research", {
       method: "POST",
       headers,
       body: JSON.stringify(newPost),
     });
+    // Retry once on 401 after refreshing app JWT
+    if (res.status === 401 || res.status === 403) {
+      await ensureAppJwt().catch(() => {});
+      token = localStorage.getItem("token");
+      headers = token
+        ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
+        : { "Content-Type": "application/json" };
+      res = await fetch("/api/research", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(newPost),
+      });
+    }
     const data = await res.json();
     if (data?.success && data?.data?.post) return data.data.post;
   } catch {}
