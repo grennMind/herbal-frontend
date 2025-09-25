@@ -38,10 +38,18 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(helmet());
+// Configure CORS origins
+const defaultDevOrigins = ['http://localhost:3000', 'http://localhost:5173'];
+const envOrigins = (process.env.FRONTEND_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const allowedOrigins = envOrigins.length > 0
+  ? envOrigins
+  : (process.env.NODE_ENV === 'production' ? [] : defaultDevOrigins);
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-domain.com'] 
-    : ['http://localhost:3000', 'http://localhost:5173'],
+  origin: allowedOrigins.length ? allowedOrigins : false,
   credentials: true
 }));
 app.use(compression());

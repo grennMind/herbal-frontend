@@ -2,12 +2,14 @@
 import { supabase } from "../config/supabase";
 import { ensureAppJwt } from "../services/authService";
 
+const API_BASE = import.meta?.env?.VITE_API_BASE || "";
+
 // Fetch research posts with optional query params (sorting, filtering, pagination)
 export const fetchResearchPosts = async (params = {}) => {
   try {
     const token = localStorage.getItem("token");
     const qs = new URLSearchParams(params).toString();
-    const res = await fetch(`/api/research${qs ? `?${qs}` : ""}`, {
+    const res = await fetch(`${API_BASE}/api/research${qs ? `?${qs}` : ""}`, {
       headers: {
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
@@ -36,7 +38,7 @@ export const fetchResearchPosts = async (params = {}) => {
 export const fetchResearchPost = async (id) => {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch(`/api/research/${id}`, {
+    const res = await fetch(`${API_BASE}/api/research/${id}`, {
       headers: {
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
@@ -69,7 +71,7 @@ export const createResearchPost = async (newPost) => {
     let headers = token
       ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
       : { "Content-Type": "application/json" };
-    let res = await fetch("/api/research", {
+    let res = await fetch(`${API_BASE}/api/research`, {
       method: "POST",
       headers,
       body: JSON.stringify(newPost),
@@ -81,7 +83,7 @@ export const createResearchPost = async (newPost) => {
       headers = token
         ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
         : { "Content-Type": "application/json" };
-      res = await fetch("/api/research", {
+      res = await fetch(`${API_BASE}/api/research`, {
         method: "POST",
         headers,
         body: JSON.stringify(newPost),
@@ -128,7 +130,7 @@ export const postComment = async (postId, content, parentId = null) => {
     let token = localStorage.getItem("token");
     if (!token) throw new Error("User must be logged in to post a comment");
 
-    let res = await fetch(`/api/research/${postId}/comments`, {
+    let res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -140,7 +142,7 @@ export const postComment = async (postId, content, parentId = null) => {
     if (res.status === 401 || res.status === 403) {
       await ensureAppJwt().catch(() => {});
       token = localStorage.getItem("token");
-      res = await fetch(`/api/research/${postId}/comments`, {
+      res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +165,7 @@ export const postComment = async (postId, content, parentId = null) => {
 export const fetchComments = async (postId) => {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch(`/api/research/${postId}/comments`, {
+    const res = await fetch(`${API_BASE}/api/research/${postId}/comments`, {
       headers: {
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
@@ -205,7 +207,7 @@ export const updateComment = async (postId, commentId, content) => {
   try {
     await ensureAppJwt().catch(() => {});
     const token = localStorage.getItem("token");
-    const res = await fetch(`/api/research/${postId}/comments/${commentId}`, {
+    const res = await fetch(`${API_BASE}/api/research/${postId}/comments/${commentId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -246,7 +248,7 @@ export const deleteResearchPost = async (postId) => {
   try {
     // Attempt backend delete with current token
     let token = localStorage.getItem("token");
-    let res = await fetch(`/api/research/${postId}`, {
+    let res = await fetch(`${API_BASE}/api/research/${postId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -258,7 +260,7 @@ export const deleteResearchPost = async (postId) => {
     if (res.status === 401 || res.status === 403) {
       await ensureAppJwt().catch(() => {});
       token = localStorage.getItem("token");
-      res = await fetch(`/api/research/${postId}`, {
+      res = await fetch(`${API_BASE}/api/research/${postId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -300,7 +302,7 @@ export const savePost = async (postId, action) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("User must be logged in to save");
-    const res = await fetch(`/api/research/${postId}/save`, {
+    const res = await fetch(`${API_BASE}/api/research/${postId}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
