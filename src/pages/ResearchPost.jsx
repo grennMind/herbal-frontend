@@ -241,7 +241,7 @@ export default function ResearchPost() {
   }
 
   return (
-    <div className="pt-28 pb-16">
+    <div className="research-post-page pt-28 pb-16">
       <div className="w-full lg:w-[70%] mx-auto px-4 lg:px-0">
         {/* Main Post Card */}
         <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
@@ -294,7 +294,7 @@ export default function ResearchPost() {
             </div>
             <div
               ref={contentRef}
-              className="prose prose-neutral dark:prose-invert max-w-none mt-6"
+              className="content-body prose prose-neutral dark:prose-invert max-w-none mt-6"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post?.content || "", { USE_PROFILES: { html: true } }) }}
             />
 
@@ -304,14 +304,14 @@ export default function ResearchPost() {
 
             {/* Attachments (if any and not already embedded in content) */}
             {Array.isArray(post.attachments) && post.attachments.length > 0 && (
-              <div className="mt-6">
+              <div className="attachments mt-6">
                 <h3 className="text-sm font-semibold text-neutral-500">Attachments</h3>
                 <div className="mt-2 flex flex-wrap gap-1 items-center">
                   {post.attachments.map((a, idx) => (
                     <div key={idx} className="inline-block">
                       {String(a.mimetype || "").startsWith("image/") && a.url ? (
                         <a href={a.url} target="_blank" rel="noreferrer" title={a.filename || "image"}>
-                          <img src={proxiedImage(a.url)} alt={a.filename || "attachment"} className="h-6 w-6 object-cover rounded-sm" />
+                          <img src={proxiedImage(a.url)} alt={a.filename || "attachment"} className="attachment-image rounded-sm" />
                         </a>
                       ) : (
                         <a href={a.url || '#'} target={a.url ? "_blank" : undefined} rel={a.url ? "noreferrer" : undefined} className="text-[10px] text-blue-600 max-w-[6rem] block truncate" title={a.filename || a.key || "Attachment"}>

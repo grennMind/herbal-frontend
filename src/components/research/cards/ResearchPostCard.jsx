@@ -21,7 +21,7 @@ const ResearchPostCard = ({ post, onClick }) => {
     <motion.div
       layout
       whileHover={{ scale: 1.02 }}
-      className="p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer flex flex-col h-72"
+      className="p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-neutral-800 shadow-sm cursor-pointer flex flex-col min-h-[500px] max-h-[500px] overflow-hidden"
       onClick={onClick}
     >
       {/* Thumbnail */}
@@ -89,15 +89,13 @@ const ResearchPostCard = ({ post, onClick }) => {
           </div>
         </div>
 
-        {isLong && (
-          <button
-            className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
-            onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-            aria-label="View more"
-          >
-            View more
-          </button>
-        )}
+        <button
+          className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
+          onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+          aria-label="View more"
+        >
+          View more
+        </button>
       </div>
     </motion.div>
   );
