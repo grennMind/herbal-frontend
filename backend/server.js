@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -28,6 +30,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDist = path.resolve(__dirname, '../dist');
 
 // Rate limiting
 const limiter = rateLimit({
@@ -85,6 +90,22 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/knowledge', knowledgeRoutes);
 app.use('/api/proxy', proxyRoutes);
 app.use('/api/session', sessionRoutes);
+
+// ------------------------------
+// Static frontend (Render single URL / production)
+// ------------------------------
+// Serve React build if it exists (harmless locally if not built)
+app.use(express.static(clientDist));
+
+// SPA fallback: send index.html for non-API routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  try {
+    return res.sendFile(path.join(clientDist, 'index.html'));
+  } catch {
+    return next();
+  }
+});
 
 // 404 handler
 app.use('*', (req, res) => {
