@@ -36,6 +36,7 @@ export const fetchResearchPosts = async (params = {}) => {
 
 // Fetch a single research post by ID
 export const fetchResearchPost = async (id) => {
+  console.log(`[DEBUG] Frontend: fetching research post ${id} -> ${API_BASE}/api/research/${id}`);
   try {
     const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE}/api/research/${id}`, {
@@ -45,11 +46,24 @@ export const fetchResearchPost = async (id) => {
       },
     });
 
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message || "Failed to fetch post");
+    console.log(`[DEBUG] Frontend: response status for post ${id}:`, res.status);
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      const text = await res.text().catch(() => "<no text>");
+      console.error(`[DEBUG] Frontend: non-JSON response for post ${id} (status ${res.status}):`, text?.slice(0, 300));
+      throw new Error(`Non-JSON response: status ${res.status}`);
+    }
+
+    if (!data?.success) {
+      console.error(`[DEBUG] Frontend: API error for post ${id}:`, data?.message);
+      throw new Error(data?.message || "Failed to fetch post");
+    }
+    console.log(`[DEBUG] Frontend: fetched post ${id} OK`);
     return data.data;
   } catch (err) {
-    console.error(err);
+    console.error(`[DEBUG] Frontend: fetchResearchPost error for ${id}:`, err);
     return { post: null, comments: [], myVote: 0 };
   }
 };
