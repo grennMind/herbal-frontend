@@ -233,15 +233,23 @@ router.get("/", optionalAuth, async (req, res) => {
 // ----------------------
 router.get("/:id", optionalAuth, async (req, res) => {
   try {
-    const { data: post, error } = await supabase
+    console.log(`[DEBUG] GET /api/research/${req.params.id} - start`);
+    console.log(`[DEBUG] Fetching research post with ID: ${req.params.id}`);
+    const { data: post, error } = await supabaseAdmin
       .from("research_posts")
       .select("*")
       .eq("id", req.params.id)
       .single();
 
-    if (error) throw error;
-    if (!post)
+    if (error) {
+      console.error(`[DEBUG] Supabase error fetching post ${req.params.id}:`, error);
+      throw error;
+    }
+    if (!post) {
+      console.log(`[DEBUG] Post ${req.params.id} not found in database.`);
       return res.status(404).json({ success: false, message: "Post not found" });
+    }
+    console.log(`[DEBUG] Successfully fetched post: ${post.id}`);
 
     // Fetch comments and build a tree (threaded)
     const { data: comments, error: commentError } = await supabase
@@ -249,8 +257,8 @@ router.get("/:id", optionalAuth, async (req, res) => {
       .select("*")
       .or(`post_id.eq.${req.params.id},and(post_id.is.null,entity_type.eq.research_post,entity_id.eq.${req.params.id})`)
       .order("created_at", { ascending: true });
-
-    if (commentError) console.warn("Comments fetch warning:", commentError.message);
+    if (commentError) console.warn("[DEBUG] Comments fetch warning:", commentError.message);
+    console.log(`[DEBUG] Comments fetched for post ${req.params.id}: count=${(comments || []).length}`);
 
     const byId = new Map();
     (comments || []).forEach((c) => byId.set(c.id, { ...c, replies: [] }));
@@ -279,10 +287,11 @@ router.get("/:id", optionalAuth, async (req, res) => {
         : Promise.resolve({ data: null }),
     ]);
     const votes_count = (votes || []).reduce((acc, v) => acc + (v.value || 0), 0);
+    console.log(`[DEBUG] Votes summary for post ${req.params.id}: total=${votes_count}, myVote=${myVote?.value || 0}`);
 
     res.json({ success: true, data: { post: { ...post, votes_count }, comments: roots, myVote: myVote?.value || 0 } });
   } catch (err) {
-    console.error("Get research post error:", err);
+    console.error("[DEBUG] Get research post error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
