@@ -2,7 +2,8 @@
 import { supabase } from "../config/supabase";
 import { ensureAppJwt } from "../services/authService";
 
-const API_BASE = import.meta?.env?.VITE_API_BASE || "";
+const API_BASE = import.meta.env.VITE_API_BASE || "https://herbal-backend-msfb.onrender.com";
+
 
 // Fetch research posts with optional query params (sorting, filtering, pagination)
 export const fetchResearchPosts = async (params = {}) => {
