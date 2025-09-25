@@ -49,12 +49,16 @@ export const fetchResearchPost = async (id) => {
     });
 
     console.log(`[DEBUG] Frontend: response status for post ${id}:`, res.status);
+    const ct = res.headers.get('content-type');
+    if (ct) console.log(`[DEBUG] Frontend: content-type for post ${id}:`, ct);
     let data;
+    // Use a clone so we can still read the raw text on JSON parse failure
+    const clone = res.clone();
     try {
       data = await res.json();
     } catch (e) {
-      const text = await res.text().catch(() => "<no text>");
-      console.error(`[DEBUG] Frontend: non-JSON response for post ${id} (status ${res.status}):`, text?.slice(0, 300));
+      const text = await clone.text().catch(() => "<no text>");
+      console.error(`[DEBUG] Frontend: non-JSON response for post ${id} (status ${res.status}):`, text?.slice(0, 500));
       throw new Error(`Non-JSON response: status ${res.status}`);
     }
 
