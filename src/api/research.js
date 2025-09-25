@@ -40,7 +40,9 @@ export const fetchResearchPost = async (id) => {
   try {
     const token = localStorage.getItem("token");
     const res = await fetch(`${API_BASE}/api/research/${id}`, {
+      cache: 'no-store',
       headers: {
+        Accept: 'application/json',
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
       },

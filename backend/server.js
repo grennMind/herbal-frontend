@@ -61,6 +61,16 @@ app.use(compression());
 app.use(morgan('combined'));
 app.use(limiter);
 
+// Disable ETag for API responses and enforce no-cache to avoid 304 with empty body
+// This prevents browsers/proxies from serving 304 Not Modified for JSON APIs
+app.set('etag', false);
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // Special handling for Stripe webhook (raw body)
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
