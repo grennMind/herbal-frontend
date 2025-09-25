@@ -101,6 +101,14 @@ app.use('/api/knowledge', knowledgeRoutes);
 app.use('/api/proxy', proxyRoutes);
 app.use('/api/session', sessionRoutes);
 
+// Ensure no /api/* path ever falls through to SPA index.html
+// Any unmatched /api/* should return JSON 404 instead of HTML
+app.all('/api/*', (req, res, next) => {
+  // If a previous route wrote headers, skip
+  if (res.headersSent) return next();
+  return res.status(404).json({ success: false, message: 'API endpoint not found' });
+});
+
 // ------------------------------
 // Static frontend (Render single URL / production)
 // ------------------------------
